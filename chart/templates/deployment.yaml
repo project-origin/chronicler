@@ -1,0 +1,73 @@
+---
+{{- $tag := .Values.image.tag | default .Chart.AppVersion -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: po-chronicler-deployment
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: po-chronicler
+spec:
+  replicas: {{ .Values.chronicler.replicaCount }}
+  selector:
+    matchLabels:
+      app: po-chronicler
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: po-chronicler
+    spec:
+      serviceAccountName: chronicler-migration-waiter
+      initContainers:
+        - name: wait-for-migration
+          image: groundnuty/k8s-wait-for:v2.0 # TODO verify this image
+          args:
+            - "job"
+            - "po-chronicler-migrate-job-{{ .Values.image.tag | default .Chart.AppVersion | replace "." "-" }}"
+      containers:
+        - name: po-chronicler
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+          args:
+            - "--serve"
+          env:
+          {{- range .Values.registries }}
+            - name: RegistryUrls__{{ .name }}
+              value: {{ .address }}
+          {{- end }}
+
+          {{- if eq .Values.persistence.type "CloudNativePG" }}
+            - name: DB_HOST
+              value: {{ .Values.persistence.cloudNativePG.name }}-rw
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_DATABASE
+              value: {{ .Values.persistence.cloudNativePG.database }}
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.persistence.cloudNativePG.name }}-app
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.persistence.cloudNativePG.name }}-app
+                  key: password
+            - name: ConnectionStrings__Database
+              value: "Host=$(DB_HOST);Port=$(DB_PORT);Database=$(DB_DATABASE);Username=$(DB_USERNAME);Password=$(DB_PASSWORD);"
+          {{- else if eq .Values.persistence.type "BYOD" }}
+            - name: ConnectionStrings__Database
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "BYOD is selected as the database type, but no secretName is provided in persistence.byod" .Values.persistence.byod.secretName }}
+                  key: {{ required "BYOD is selected as the database type, but no secretKey is provided in persistence.byod" .Values.persistence.byod.secretKey }}
+          {{- else }}
+            {{- fail "Unsupported database type specified. Please specify 'persistence.type' as either 'CloudNativePG' or 'BYOD'." }}
+          {{- end }}
+
+            # OpenTelemetry Collector Configuration
+            - name: Otlp__Enabled
+              value: {{ .Values.otlp.enabled | quote }}
+            - name: Otlp__Endpoint
+              value: {{ .Values.otlp.endpoint }}
