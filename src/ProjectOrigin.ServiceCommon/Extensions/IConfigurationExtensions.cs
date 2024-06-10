@@ -1,15 +1,12 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ProjectOrigin.Chronicler.Server.Database;
+using ProjectOrigin.ServiceCommon.DataPersistence;
 using Serilog;
-using Serilog.Enrichers.Span;
-using Serilog.Formatting.Json;
 
-namespace ProjectOrigin.Chronicler.Server.Extensions;
+namespace ProjectOrigin.ServiceCommon.Extensions;
 
 public static class IConfigurationExtensions
 {
@@ -37,12 +34,12 @@ public static class IConfigurationExtensions
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddSerilog(logger);
-        services.ConfigurePersistance(configuration);
+        services.ConfigurePostgresPersistence(configuration);
         using var serviceProvider = services.BuildServiceProvider();
         return serviceProvider.GetRequiredService<IRepositoryUpgrader>();
     }
 
-    public static WebApplication BuildApp(this IConfigurationRoot configuration)
+    public static WebApplication BuildApp<T>(this IConfigurationRoot configuration)
     {
         var builder = WebApplication.CreateBuilder();
 
@@ -52,37 +49,14 @@ public static class IConfigurationExtensions
         builder.Logging.ClearProviders();
         builder.Logging.AddSerilog(Log.Logger);
 
-        var startup = new Startup(builder.Configuration);
-        startup.ConfigureServices(builder.Services);
+        //todo cleanup
+        //var startup = new Startup(builder.Configuration);
+        var startup = Activator.CreateInstance(typeof(T), builder.Configuration) as dynamic;
+        startup!.ConfigureServices(builder.Services);
 
         var app = builder.Build();
         startup.Configure(app, builder.Environment);
+
         return app;
-    }
-
-    public static Serilog.ILogger GetSeriLogger(this IConfiguration configuration)
-    {
-        var loggerConfiguration = new LoggerConfiguration()
-            .Filter.ByExcluding("RequestPath like '/health%'")
-            .Filter.ByExcluding("RequestPath like '/metrics%'")
-            .Enrich.WithSpan();
-
-        var logOutputFormat = configuration.GetValue<string>("LogOutputFormat");
-
-        switch (logOutputFormat)
-        {
-            case "json":
-                loggerConfiguration = loggerConfiguration.WriteTo.Console(new JsonFormatter());
-                break;
-
-            case "text":
-                loggerConfiguration = loggerConfiguration.WriteTo.Console();
-                break;
-
-            default:
-                throw new NotSupportedException($"LogOutputFormat of value ”{logOutputFormat}” is not supported");
-        }
-
-        return loggerConfiguration.CreateLogger();
     }
 }

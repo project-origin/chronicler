@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace ProjectOrigin.Chronicler.Server.Database;
+namespace ProjectOrigin.ServiceCommon.DataPersistence;
 
 public interface IDbConnectionFactory
 {

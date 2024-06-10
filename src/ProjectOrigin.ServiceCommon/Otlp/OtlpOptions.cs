@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjectOrigin.Chronicler.Server.Options;
+namespace ProjectOrigin.ServiceCommon.Otlp;
 
 public record OtlpOptions() : IValidatableObject
 {

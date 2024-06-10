@@ -1,24 +1,28 @@
-using System;
-using System.Threading.Tasks;
+using System.Reflection;
 using DbUp;
 using DbUp.Engine;
 using DbUp.Engine.Output;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace ProjectOrigin.Chronicler.Server.Database.Postgres;
+namespace ProjectOrigin.ServiceCommon.DataPersistence.Postgres;
 
 public class PostgresUpgrader : IRepositoryUpgrader
 {
     private static TimeSpan _sleepTime = TimeSpan.FromSeconds(5);
     private static TimeSpan _timeout = TimeSpan.FromMinutes(5);
+    private readonly Assembly? _databaseScriptsAssembly;
     private readonly ILogger<PostgresUpgrader> _logger;
     private readonly string _connectionString;
 
-    public PostgresUpgrader(ILogger<PostgresUpgrader> logger, IOptions<PostgresOptions> configuration)
+    public PostgresUpgrader(
+        ILogger<PostgresUpgrader> logger,
+        IOptions<PostgresOptions> configuration,
+        Assembly? databaseScriptsAssembly = null)
     {
         _logger = logger;
         _connectionString = configuration.Value.ConnectionString;
+        _databaseScriptsAssembly = databaseScriptsAssembly;
     }
 
     public async Task<bool> IsUpgradeRequired()
@@ -57,13 +61,16 @@ public class PostgresUpgrader : IRepositoryUpgrader
 
     private UpgradeEngine BuildUpgradeEngine(string? connectionString)
     {
-        return DeployChanges.To
+        var engineBuilder = DeployChanges.To
                     .PostgresqlDatabase(connectionString)
-                    .WithTransaction()
-                    .WithScriptsEmbeddedInAssembly(typeof(PostgresUpgrader).Assembly)
-                    .LogTo(new LoggerWrapper(_logger))
-                    .WithExecutionTimeout(_timeout)
-                    .Build();
+                    .WithTransaction();
+
+        if (_databaseScriptsAssembly != null)
+            engineBuilder = engineBuilder.WithScriptsEmbeddedInAssembly(_databaseScriptsAssembly);
+
+        return engineBuilder.LogTo(new LoggerWrapper(_logger))
+                .WithExecutionTimeout(_timeout)
+                .Build();
     }
 
     private sealed class LoggerWrapper : IUpgradeLog

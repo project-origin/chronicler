@@ -3,8 +3,10 @@ using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectOrigin.Chronicler.Server.Database;
-using ProjectOrigin.Chronicler.Server.Extensions;
+using ProjectOrigin.Chronicler.Server;
+using ProjectOrigin.ServiceCommon.DataPersistence;
+using ProjectOrigin.ServiceCommon.Extensions;
+using ProjectOrigin.ServiceCommon.Logging;
 using Serilog;
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -31,7 +33,7 @@ try
     if (args.Contains("--serve"))
     {
         Log.Information("Starting server.");
-        WebApplication app = configuration.BuildApp();
+        WebApplication app = configuration.BuildApp<Startup>();
 
         var upgrader = app.Services.GetRequiredService<IRepositoryUpgrader>();
         if (await upgrader.IsUpgradeRequired())

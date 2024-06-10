@@ -9,27 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.35" />
-    <PackageReference Include="dbup-postgresql" Version="5.0.40" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.62.0" />
-    <PackageReference Include="Npgsql" Version="8.0.3" />
-    <PackageReference Include="Npgsql.OpenTelemetry" Version="8.0.3" />
-    <PackageReference Include="OpenTelemetry" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.0" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.8.0-beta.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Process" Version="0.5.0-beta.5" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.8.1" />
-    <PackageReference Include="ProjectOrigin.PedersenCommitment" Version="1.1.1" />
-    <PackageReference Include="ProjectOrigin.HierarchicalDeterministicKeys" Version="1.0.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
-    <PackageReference Include="Serilog.Enrichers.Span" Version="3.1.0" />
-    <PackageReference Include="Serilog.Expressions" Version="4.0.0" />
+    <ProjectReference Include="..\ProjectOrigin.ServiceCommon\ProjectOrigin.ServiceCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Database\Postgres\Scripts\*.sql">
+    <PackageReference Include="ProjectOrigin.PedersenCommitment" Version="1.1.1" />
+    <PackageReference Include="ProjectOrigin.HierarchicalDeterministicKeys" Version="1.0.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.62.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DatabaseScripts\*.sql">
       <LogicalName>Scripts.%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
@@ -39,7 +29,7 @@
   </Target>
 
   <ItemGroup>
-    <Protobuf Include="../Protos/chronicler.proto" GrpcServices="Server" />
+    <Protobuf Include="../Protos/chronicler.proto" GrpcServices="Both" />
     <Protobuf Include="../Protos/common.proto" Link="Protos\common.proto">
       <SourceUrl>https://raw.githubusercontent.com/project-origin/registry/v1.3.0/src/Protos/common.proto</SourceUrl>
     </Protobuf>

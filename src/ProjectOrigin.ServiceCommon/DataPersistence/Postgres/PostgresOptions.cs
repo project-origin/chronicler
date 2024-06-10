@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjectOrigin.Chronicler.Server.Database.Postgres;
+namespace ProjectOrigin.ServiceCommon.DataPersistence.Postgres;
 
 public sealed class PostgresOptions
 {

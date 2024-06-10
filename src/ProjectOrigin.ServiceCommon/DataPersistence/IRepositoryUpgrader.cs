@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
-
-namespace ProjectOrigin.Chronicler.Server.Database;
+namespace ProjectOrigin.ServiceCommon.DataPersistence;
 
 public interface IRepositoryUpgrader
 {

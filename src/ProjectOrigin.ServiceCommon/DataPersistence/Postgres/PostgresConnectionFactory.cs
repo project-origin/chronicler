@@ -1,9 +1,8 @@
 using System.Data;
 using Microsoft.Extensions.Options;
 using Npgsql;
-using ProjectOrigin.Chronicler.Server.Database.Postgres;
 
-namespace ProjectOrigin.Chronicler.Server.Database.Postgres;
+namespace ProjectOrigin.ServiceCommon.DataPersistence.Postgres;
 
 public class PostgresConnectionFactory : IDbConnectionFactory
 {
@@ -14,5 +13,10 @@ public class PostgresConnectionFactory : IDbConnectionFactory
         _databaseOptions = databaseOptions.Value;
     }
 
-    public IDbConnection CreateConnection() => new NpgsqlConnection(_databaseOptions.ConnectionString);
+    public IDbConnection CreateConnection()
+    {
+        var connection = new NpgsqlConnection(_databaseOptions.ConnectionString);
+        connection.Open();
+        return connection;
+    }
 }
