@@ -17,7 +17,9 @@ public static class ConfigureExtensions
             services.AddOpenTelemetry()
                 .ConfigureResource(r =>
                 {
-                    string assemblyName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name ?? throw new InvalidOperationException("Failed to get entry assembly name");
+                    string assemblyName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name
+                        ?? throw new InvalidOperationException("Failed to get entry assembly name");
+
                     r.AddService(assemblyName, serviceInstanceId: Environment.MachineName);
                 })
                 .WithMetrics(metrics =>
