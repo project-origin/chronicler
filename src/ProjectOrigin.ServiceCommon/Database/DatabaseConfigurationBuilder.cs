@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjectOrigin.ServiceCommon.Database.Postgres;
 
-internal class PostgresConfigurationBuilder : IDatabaseConfigurationBuilder
+internal class DatabaseConfigurationBuilder : IDatabaseConfigurationBuilder
 {
     public IEnumerable<Assembly> DatabaseScriptsAssemblies = new List<Assembly>();
     public IDictionary<Type, ObjectFactory> RepositoryFactories = new Dictionary<Type, ObjectFactory>();

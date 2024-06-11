@@ -1,8 +1,10 @@
 using System.Data;
+using DbUp.Builder;
 
 namespace ProjectOrigin.ServiceCommon.Database;
 
-public interface IDatabaseConnectionFactory
+public interface IDatabaseFactory
 {
     IDbConnection CreateConnection();
+    UpgradeEngineBuilder CreateUpgradeEngineBuilder();
 }

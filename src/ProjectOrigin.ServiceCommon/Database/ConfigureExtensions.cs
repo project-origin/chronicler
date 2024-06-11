@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,22 +11,17 @@ namespace ProjectOrigin.ServiceCommon.Database;
 
 public static class ConfigureExtensions
 {
-    public static void ConfigurePostgresPersistence(this IServiceCollection services, IConfiguration configuration, Action<IDatabaseConfigurationBuilder> options)
+    public static void ConfigureDatabase(this IServiceCollection services, IConfiguration configuration, Action<IDatabaseConfigurationBuilder> configuratorBuilder)
     {
-        var builder = new PostgresConfigurationBuilder();
-        options(builder);
+        var builder = new DatabaseConfigurationBuilder();
+        configuratorBuilder(builder);
 
-        services.AddOptions<PostgresOptions>()
-            .Configure(x => x.ConnectionString = configuration.GetConnectionString("Database")
-                ?? throw new ValidationException("Configuration does not contain a connection string named 'Database'."))
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
+        services.AddSingleton<IDatabaseUpgrader>(serviceProvider => ActivatorUtilities.CreateInstance<DatabaseUpgrader>(serviceProvider, builder.DatabaseScriptsAssemblies));
 
-        services.AddSingleton<IDatabaseUpgrader>(serviceProvider => ActivatorUtilities.CreateInstance<PostgresUpgrader>(serviceProvider, builder.DatabaseScriptsAssemblies));
-        services.AddSingleton<IDatabaseConnectionFactory, PostgresConnectionFactory>();
-
-        services.AddScoped<IDbConnection>(serviceProvider => serviceProvider.GetRequiredService<IDatabaseConnectionFactory>().CreateConnection());
+        services.AddScoped<IDbConnection>(serviceProvider => serviceProvider.GetRequiredService<IDatabaseFactory>().CreateConnection());
         services.AddScoped<IUnitOfWork>(serviceProvider => ActivatorUtilities.CreateInstance<UnitOfWork>(serviceProvider, builder.RepositoryFactories));
+
+        services.ConfigurePostgres(configuration);
 
         var otlpOptions = configuration.GetSection(OtlpOptions.Prefix).Get<OtlpOptions>();
         if (otlpOptions != null && otlpOptions.Enabled)
@@ -42,7 +36,7 @@ public static class ConfigureExtensions
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddSerilog(logger);
-        services.ConfigurePostgresPersistence(configuration, options);
+        services.ConfigureDatabase(configuration, options);
         using var serviceProvider = services.BuildServiceProvider();
         return serviceProvider.GetRequiredService<IDatabaseUpgrader>();
     }

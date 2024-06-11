@@ -1,33 +1,31 @@
 using System.Reflection;
-using DbUp;
 using DbUp.Engine;
 using DbUp.Engine.Output;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-namespace ProjectOrigin.ServiceCommon.Database.Postgres;
+namespace ProjectOrigin.ServiceCommon.Database;
 
-public class PostgresUpgrader : IDatabaseUpgrader
+public class DatabaseUpgrader : IDatabaseUpgrader
 {
     private static TimeSpan _sleepTime = TimeSpan.FromSeconds(5);
     private static TimeSpan _timeout = TimeSpan.FromMinutes(5);
     private readonly IEnumerable<Assembly> _databaseScriptsAssemblies;
-    private readonly ILogger<PostgresUpgrader> _logger;
-    private readonly string _connectionString;
+    private readonly ILogger<DatabaseUpgrader> _logger;
+    private readonly IDatabaseFactory _databaseFactory;
 
-    public PostgresUpgrader(
-        ILogger<PostgresUpgrader> logger,
-        IOptions<PostgresOptions> configuration,
+    public DatabaseUpgrader(
+        ILogger<DatabaseUpgrader> logger,
+        IDatabaseFactory databaseConnectionFactory,
         IEnumerable<Assembly> databaseScriptsAssemblies)
     {
         _logger = logger;
-        _connectionString = configuration.Value.ConnectionString;
+        _databaseFactory = databaseConnectionFactory;
         _databaseScriptsAssemblies = databaseScriptsAssemblies;
     }
 
     public async Task<bool> IsUpgradeRequired()
     {
-        var upgradeEngine = BuildUpgradeEngine(_connectionString);
+        var upgradeEngine = BuildUpgradeEngine();
         await TryConnectToDatabaseWithRetry(upgradeEngine);
 
         return upgradeEngine.IsUpgradeRequired();
@@ -35,7 +33,7 @@ public class PostgresUpgrader : IDatabaseUpgrader
 
     public async Task Upgrade()
     {
-        var upgradeEngine = BuildUpgradeEngine(_connectionString);
+        var upgradeEngine = BuildUpgradeEngine();
         await TryConnectToDatabaseWithRetry(upgradeEngine);
 
         var databaseUpgradeResult = upgradeEngine.PerformUpgrade();
@@ -59,11 +57,10 @@ public class PostgresUpgrader : IDatabaseUpgrader
         }
     }
 
-    private UpgradeEngine BuildUpgradeEngine(string? connectionString)
+    private UpgradeEngine BuildUpgradeEngine()
     {
-        var engineBuilder = DeployChanges.To
-                    .PostgresqlDatabase(connectionString)
-                    .WithTransaction();
+        var engineBuilder = _databaseFactory.CreateUpgradeEngineBuilder()
+            .WithTransaction();
 
         foreach (var _databaseScriptsAssembly in _databaseScriptsAssemblies)
             engineBuilder = engineBuilder.WithScriptsEmbeddedInAssembly(_databaseScriptsAssembly);

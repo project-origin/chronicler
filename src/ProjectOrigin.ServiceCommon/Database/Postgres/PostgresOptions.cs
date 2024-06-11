@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectOrigin.ServiceCommon.Database.Postgres;
 
-public sealed class PostgresOptions
+public record PostgresOptions
 {
-    [Required]
+    [Required(AllowEmptyStrings = false)]
     public required string ConnectionString { get; set; }
 }

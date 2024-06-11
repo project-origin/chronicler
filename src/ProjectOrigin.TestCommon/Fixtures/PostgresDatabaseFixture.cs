@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Npgsql;
+using ProjectOrigin.ServiceCommon.Database;
 using ProjectOrigin.ServiceCommon.Database.Postgres;
 using Testcontainers.PostgreSql;
 using Xunit;
@@ -45,11 +46,12 @@ public class PostgresDatabaseFixture<TScriptAssembly> : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await _postgreSqlContainer.StartAsync();
-        var mockLogger = new Mock<ILogger<PostgresUpgrader>>();
-        var upgrader = new PostgresUpgrader(mockLogger.Object, Options.Create(new PostgresOptions
+        var mockLogger = new Mock<ILogger<DatabaseUpgrader>>();
+        var option = Options.Create(new PostgresOptions
         {
             ConnectionString = _postgreSqlContainer.GetConnectionString()
-        }), new List<Assembly> { typeof(TScriptAssembly).Assembly });
+        });
+        var upgrader = new DatabaseUpgrader(mockLogger.Object, new PostgresFactory(option), new List<Assembly> { typeof(TScriptAssembly).Assembly });
         await upgrader.Upgrade();
     }
 

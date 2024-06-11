@@ -24,7 +24,7 @@ public class Startup
     {
         services.ConfigureDefaultOtlp(_configuration);
         services.ConfigureGrpc(_configuration);
-        services.ConfigurePostgresPersistence(_configuration, (options) =>
+        services.ConfigureDatabase(_configuration, (options) =>
         {
             options.AddScriptsFromAssemblyWithType<Startup>();
             options.AddRepository<IChroniclerRepository, ChroniclerRepository>();
