@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using ProjectOrigin.ServiceCommon.Extensions;
 
 namespace ProjectOrigin.ServiceCommon.Otlp;
 

@@ -1,9 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ProjectOrigin.ServiceCommon.DataPersistence;
 using Serilog;
 
 namespace ProjectOrigin.ServiceCommon.Extensions;
@@ -27,16 +25,6 @@ public static class IConfigurationExtensions
         {
             throw new ValidationException($"Configuration value of type {typeof(T)} is invalid", ex);
         }
-    }
-
-    public static IDatebaseUpgrader GetDatabaseUpgrader(this IConfiguration configuration, Serilog.ILogger logger, Action<IDataPersistenceConfigurationBuilder> options)
-    {
-        var services = new ServiceCollection();
-        services.AddLogging();
-        services.AddSerilog(logger);
-        services.ConfigurePostgresPersistence(configuration, options);
-        using var serviceProvider = services.BuildServiceProvider();
-        return serviceProvider.GetRequiredService<IDatebaseUpgrader>();
     }
 
     public static WebApplication BuildApp<T>(this IConfigurationRoot configuration)

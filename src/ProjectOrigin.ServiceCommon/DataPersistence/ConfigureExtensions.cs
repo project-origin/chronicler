@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using ProjectOrigin.ServiceCommon.DataPersistence.Postgres;
 using ProjectOrigin.ServiceCommon.Otlp;
+using Serilog;
 
 namespace ProjectOrigin.ServiceCommon.DataPersistence;
 
@@ -34,5 +35,15 @@ public static class ConfigureExtensions
             services.AddOpenTelemetry()
                 .WithTracing(provider => provider.AddNpgsql());
         }
+    }
+
+    public static IDatebaseUpgrader GetDatabaseUpgrader(this IConfiguration configuration, Serilog.ILogger logger, Action<IDataPersistenceConfigurationBuilder> options)
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddSerilog(logger);
+        services.ConfigurePostgresPersistence(configuration, options);
+        using var serviceProvider = services.BuildServiceProvider();
+        return serviceProvider.GetRequiredService<IDatebaseUpgrader>();
     }
 }

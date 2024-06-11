@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ProjectOrigin.ServiceCommon.Otlp;
@@ -20,13 +18,13 @@ public record OtlpOptions() : IValidatableObject
             {
                 yield return new ValidationResult(
                     $"The {nameof(Endpoint)} field is required when telemetry is enabled.",
-                    new[] { nameof(Endpoint) });
+                    [nameof(Endpoint)]);
             }
             else if (Endpoint.Scheme != Uri.UriSchemeHttp && Endpoint.Scheme != Uri.UriSchemeHttps)
             {
                 yield return new ValidationResult(
                     $"The {nameof(Endpoint)} must use the HTTP or HTTPS scheme.",
-                    new[] { nameof(Endpoint) });
+                    [nameof(Endpoint)]);
             }
         }
     }
