@@ -3,15 +3,11 @@ using Grpc.Core.Interceptors;
 using System.Threading.Tasks;
 using Grpc.Core;
 
-namespace ProjectOrigin.TestUtils;
+namespace ProjectOrigin.TestUtils.Fixtures.ServerAuxiliaries;
 
-public class ExceptionInterceptor : Interceptor
+internal class ExceptionInterceptor : Interceptor
 {
     private Exception? _exception = null;
-
-    public ExceptionInterceptor()
-    {
-    }
 
     public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(
            TRequest request,

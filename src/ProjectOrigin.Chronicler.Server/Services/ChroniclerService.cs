@@ -40,17 +40,20 @@ public class ChroniclerService : V1.RegistryService.RegistryServiceBase
         await _unitOfWork.GetRepository<IChroniclerRepository>().InsertClaimIntent(claimIntent);
         _unitOfWork.Commit();
 
-        var obj = new V1.ClaimIntent()
-        {
-            CertificateId = request.CertificateId,
-            Commitment = ByteString.CopyFrom(commitmentInfo.Commitment.C),
-        };
-
-        var signature = _signingKey.Sign(obj.ToByteArray()).ToArray();
-
         return new V1.ClaimIntentResponse()
         {
-            Signature = ByteString.CopyFrom(signature)
+            Signature = ByteString.CopyFrom(SignIntent(request.CertificateId, commitmentInfo))
         };
+    }
+
+    private ReadOnlySpan<byte> SignIntent(Common.V1.FederatedStreamId certificateId, SecretCommitmentInfo commitmentInfo)
+    {
+        var bytes = new V1.ClaimIntent()
+        {
+            CertificateId = certificateId,
+            Commitment = ByteString.CopyFrom(commitmentInfo.Commitment.C),
+        }.ToByteArray();
+
+        return _signingKey.Sign(bytes);
     }
 }

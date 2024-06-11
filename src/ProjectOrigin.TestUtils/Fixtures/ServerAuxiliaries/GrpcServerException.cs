@@ -1,9 +1,7 @@
 using System;
 
-namespace ProjectOrigin.TestUtils;
+namespace ProjectOrigin.TestUtils.Fixtures.ServerAuxiliaries;
 
-
-[Serializable]
 public class GrpcServerException : Exception
 {
     public GrpcServerException(Exception? innerException) :

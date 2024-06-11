@@ -4,13 +4,15 @@ using Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using Grpc.Core.Interceptors;
 using Grpc.Core;
+using ProjectOrigin.TestUtils.Fixtures;
+using ProjectOrigin.TestUtils.Fixtures.ServerAuxiliaries;
 
 namespace ProjectOrigin.TestUtils;
 
 public abstract class TestServerBase<TStartup> : IClassFixture<TestServerFixture<TStartup>>, IDisposable where TStartup : class
 {
     protected readonly TestServerFixture<TStartup> _serverFixtur;
-    protected readonly ExceptionInterceptor _exceptionInterceptor;
+    private readonly ExceptionInterceptor _exceptionInterceptor;
 
     protected CallInvoker Channel => _serverFixtur.Channel.Intercept(_exceptionInterceptor);
 
@@ -26,7 +28,7 @@ public abstract class TestServerBase<TStartup> : IClassFixture<TestServerFixture
         _serverFixtur.ConfigureTestServices += (serviceCollection) =>
         {
             serviceCollection.AddGrpc(options => options.Interceptors.Add<ExceptionInterceptor>());
-            serviceCollection.AddSingleton<ExceptionInterceptor>(_exceptionInterceptor);
+            serviceCollection.AddSingleton(_exceptionInterceptor);
         };
     }
 

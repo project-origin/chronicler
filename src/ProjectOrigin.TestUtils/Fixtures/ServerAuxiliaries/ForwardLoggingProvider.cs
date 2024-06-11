@@ -19,7 +19,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace ProjectOrigin.TestUtils
+namespace ProjectOrigin.TestUtils.Fixtures.ServerAuxiliaries
 {
     internal class ForwardingLoggerProvider : ILoggerProvider
     {

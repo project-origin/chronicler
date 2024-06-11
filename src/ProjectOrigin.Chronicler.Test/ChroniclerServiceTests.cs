@@ -8,6 +8,7 @@ using ProjectOrigin.HierarchicalDeterministicKeys;
 using ProjectOrigin.HierarchicalDeterministicKeys.Interfaces;
 using ProjectOrigin.PedersenCommitment;
 using ProjectOrigin.TestUtils;
+using ProjectOrigin.TestUtils.Fixtures;
 using Xunit;
 using Xunit.Abstractions;
 

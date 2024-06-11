@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Testcontainers.Redis;
 using Xunit;
 
-namespace ProjectOrigin.TestUtils;
+namespace ProjectOrigin.TestUtils.Fixtures;
 
 public class RedisFixture : IAsyncLifetime
 {
