@@ -4,15 +4,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using ProjectOrigin.ServiceCommon.DataPersistence.Postgres;
+using ProjectOrigin.ServiceCommon.Database.Postgres;
 using ProjectOrigin.ServiceCommon.Otlp;
 using Serilog;
 
-namespace ProjectOrigin.ServiceCommon.DataPersistence;
+namespace ProjectOrigin.ServiceCommon.Database;
 
 public static class ConfigureExtensions
 {
-    public static void ConfigurePostgresPersistence(this IServiceCollection services, IConfiguration configuration, Action<IDataPersistenceConfigurationBuilder> options)
+    public static void ConfigurePostgresPersistence(this IServiceCollection services, IConfiguration configuration, Action<IDatabaseConfigurationBuilder> options)
     {
         var builder = new PostgresConfigurationBuilder();
         options(builder);
@@ -23,10 +23,10 @@ public static class ConfigureExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<IDatebaseUpgrader>(serviceProvider => ActivatorUtilities.CreateInstance<PostgresUpgrader>(serviceProvider, builder.DatabaseScriptsAssemblies));
-        services.AddSingleton<IDbConnectionFactory, PostgresConnectionFactory>();
+        services.AddSingleton<IDatabaseUpgrader>(serviceProvider => ActivatorUtilities.CreateInstance<PostgresUpgrader>(serviceProvider, builder.DatabaseScriptsAssemblies));
+        services.AddSingleton<IDatabaseConnectionFactory, PostgresConnectionFactory>();
 
-        services.AddScoped<IDbConnection>(serviceProvider => serviceProvider.GetRequiredService<IDbConnectionFactory>().CreateConnection());
+        services.AddScoped<IDbConnection>(serviceProvider => serviceProvider.GetRequiredService<IDatabaseConnectionFactory>().CreateConnection());
         services.AddScoped<IUnitOfWork>(serviceProvider => ActivatorUtilities.CreateInstance<UnitOfWork>(serviceProvider, builder.RepositoryFactories));
 
         var otlpOptions = configuration.GetSection(OtlpOptions.Prefix).Get<OtlpOptions>();
@@ -37,13 +37,13 @@ public static class ConfigureExtensions
         }
     }
 
-    public static IDatebaseUpgrader GetDatabaseUpgrader(this IConfiguration configuration, Serilog.ILogger logger, Action<IDataPersistenceConfigurationBuilder> options)
+    public static IDatabaseUpgrader GetDatabaseUpgrader(this IConfiguration configuration, Serilog.ILogger logger, Action<IDatabaseConfigurationBuilder> options)
     {
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddSerilog(logger);
         services.ConfigurePostgresPersistence(configuration, options);
         using var serviceProvider = services.BuildServiceProvider();
-        return serviceProvider.GetRequiredService<IDatebaseUpgrader>();
+        return serviceProvider.GetRequiredService<IDatabaseUpgrader>();
     }
 }

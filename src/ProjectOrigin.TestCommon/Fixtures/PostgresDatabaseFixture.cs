@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Npgsql;
-using ProjectOrigin.ServiceCommon.DataPersistence.Postgres;
+using ProjectOrigin.ServiceCommon.Database.Postgres;
 using Testcontainers.PostgreSql;
 using Xunit;
 

@@ -7,7 +7,7 @@ using ProjectOrigin.Chronicler.Server.Models;
 using ProjectOrigin.Chronicler.Server.Options;
 using ProjectOrigin.HierarchicalDeterministicKeys.Interfaces;
 using ProjectOrigin.PedersenCommitment;
-using ProjectOrigin.ServiceCommon.DataPersistence;
+using ProjectOrigin.ServiceCommon.Database;
 using ProjectOrigin.WalletSystem.Server.Repositories;
 
 namespace ProjectOrigin.Chronicler.Server.Services;

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectOrigin.Chronicler.Server.Options;
 using ProjectOrigin.Chronicler.Server.Services;
-using ProjectOrigin.ServiceCommon.DataPersistence;
+using ProjectOrigin.ServiceCommon.Database;
 using ProjectOrigin.ServiceCommon.Grpc;
 using ProjectOrigin.ServiceCommon.Otlp;
 using ProjectOrigin.WalletSystem.Server.Repositories;

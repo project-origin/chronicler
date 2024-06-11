@@ -1,8 +1,8 @@
 using System.Reflection;
 
-namespace ProjectOrigin.ServiceCommon.DataPersistence;
+namespace ProjectOrigin.ServiceCommon.Database;
 
-public interface IDataPersistenceConfigurationBuilder
+public interface IDatabaseConfigurationBuilder
 {
     public void AddRepository<TService, TImplementation>()
         where TService : class

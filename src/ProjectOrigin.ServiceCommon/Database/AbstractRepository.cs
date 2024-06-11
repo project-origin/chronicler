@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace ProjectOrigin.ServiceCommon.DataPersistence;
+namespace ProjectOrigin.ServiceCommon.Database;
 
 public abstract class AbstractRepository
 {

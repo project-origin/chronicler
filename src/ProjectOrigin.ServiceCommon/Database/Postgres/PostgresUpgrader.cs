@@ -5,9 +5,9 @@ using DbUp.Engine.Output;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace ProjectOrigin.ServiceCommon.DataPersistence.Postgres;
+namespace ProjectOrigin.ServiceCommon.Database.Postgres;
 
-public class PostgresUpgrader : IDatebaseUpgrader
+public class PostgresUpgrader : IDatabaseUpgrader
 {
     private static TimeSpan _sleepTime = TimeSpan.FromSeconds(5);
     private static TimeSpan _timeout = TimeSpan.FromMinutes(5);

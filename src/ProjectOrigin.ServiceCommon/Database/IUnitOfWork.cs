@@ -1,6 +1,4 @@
-using System.Data;
-
-namespace ProjectOrigin.ServiceCommon.DataPersistence;
+namespace ProjectOrigin.ServiceCommon.Database;
 
 public interface IUnitOfWork
 {

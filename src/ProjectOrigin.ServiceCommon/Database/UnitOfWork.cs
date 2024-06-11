@@ -1,7 +1,7 @@
 using System.Data;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ProjectOrigin.ServiceCommon.DataPersistence;
+namespace ProjectOrigin.ServiceCommon.Database;
 
 public sealed class UnitOfWork : IUnitOfWork, IDisposable
 {

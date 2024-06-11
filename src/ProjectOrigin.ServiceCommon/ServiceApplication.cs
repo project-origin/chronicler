@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectOrigin.ServiceCommon.DataPersistence;
+using ProjectOrigin.ServiceCommon.Database;
 using ProjectOrigin.ServiceCommon.Extensions;
 using ProjectOrigin.ServiceCommon.Logging;
 using Serilog;
@@ -82,7 +82,7 @@ public class ServiceApplication<TStartup>
 
         WebApplication app = configuration.BuildApp<TStartup>();
 
-        var upgrader = app.Services.GetService<IDatebaseUpgrader>();
+        var upgrader = app.Services.GetService<IDatabaseUpgrader>();
         if (upgrader != null && await upgrader.IsUpgradeRequired())
             throw new InvalidOperationException("Repository is not up to date. Please run with --migrate first.");
 

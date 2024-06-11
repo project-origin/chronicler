@@ -2,9 +2,9 @@ using System.Data;
 using Microsoft.Extensions.Options;
 using Npgsql;
 
-namespace ProjectOrigin.ServiceCommon.DataPersistence.Postgres;
+namespace ProjectOrigin.ServiceCommon.Database.Postgres;
 
-public class PostgresConnectionFactory : IDbConnectionFactory
+public class PostgresConnectionFactory : IDatabaseConnectionFactory
 {
     private readonly PostgresOptions _databaseOptions;
 
