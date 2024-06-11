@@ -7,6 +7,8 @@ namespace ProjectOrigin.ServiceCommon.Logging;
 
 public static class ConfigureExtensions
 {
+    public const string LogOutputFormatKey = "LogOutputFormat";
+
     public static ILogger GetSeriLogger(this IConfiguration configuration)
     {
         var loggerConfiguration = new LoggerConfiguration()
@@ -14,20 +16,20 @@ public static class ConfigureExtensions
             .Filter.ByExcluding("RequestPath like '/metrics%'")
             .Enrich.WithSpan();
 
-        var logOutputFormat = configuration.GetValue<string>("LogOutputFormat");
+        var logOutputFormat = configuration.GetValue<LogFormat>(LogOutputFormatKey);
 
         switch (logOutputFormat)
         {
-            case "json":
+            case LogFormat.Json:
                 loggerConfiguration = loggerConfiguration.WriteTo.Console(new JsonFormatter());
                 break;
 
-            case "text":
+            case LogFormat.Text:
                 loggerConfiguration = loggerConfiguration.WriteTo.Console();
                 break;
 
             default:
-                throw new NotSupportedException($"LogOutputFormat of value ”{logOutputFormat}” is not supported");
+                throw new NotSupportedException($"{LogOutputFormatKey} of value ”{logOutputFormat}” is not supported");
         }
 
         return loggerConfiguration.CreateLogger();

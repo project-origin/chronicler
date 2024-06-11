@@ -28,7 +28,6 @@ public class ChroniclerServiceTests : TestServerBase<Startup>, IClassFixture<Tes
         _databaseFixture = databaseFixture;
         serverFixture.ConfigureHostConfiguration(new()
         {
-            { "LogOutputFormat", "text" },
             { "ConnectionStrings:Database", databaseFixture.HostConnectionString },
             { "Chronicler:SigningKeyFilename", TempFile.WriteAllText(_privateKey.ExportPkixText()) },
         });
