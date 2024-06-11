@@ -37,8 +37,6 @@ public static class IConfigurationExtensions
         builder.Logging.ClearProviders();
         builder.Logging.AddSerilog(Log.Logger);
 
-        //todo cleanup
-        //var startup = new Startup(builder.Configuration);
         var startup = Activator.CreateInstance(typeof(T), builder.Configuration) as dynamic;
         startup!.ConfigureServices(builder.Services);
 
