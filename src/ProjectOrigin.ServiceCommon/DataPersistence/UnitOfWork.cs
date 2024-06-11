@@ -1,85 +1,79 @@
 using System.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjectOrigin.ServiceCommon.DataPersistence;
 
 public sealed class UnitOfWork : IUnitOfWork, IDisposable
 {
-    private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
-    private readonly IDbConnection _connection;
     private readonly IServiceProvider _provider;
-    private Lazy<IDbTransaction> _lazyTransaction;
+    private readonly IDbConnection _dbConnection;
+    private readonly IDictionary<Type, ObjectFactory> _repositoryFactories;
+    private Lazy<IDbTransaction> _transaction;
+    private Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
 
-    public UnitOfWork(IDbConnection connection, IServiceProvider provider)
+    public UnitOfWork(IServiceProvider provider, IDbConnection dbConnection, IDictionary<Type, ObjectFactory> repositoryFactories)
     {
-        _connection = connection;
         _provider = provider;
-        _lazyTransaction = new Lazy<IDbTransaction>(_connection.BeginTransaction);
+        _dbConnection = dbConnection;
+        _repositoryFactories = repositoryFactories;
+        _transaction = new Lazy<IDbTransaction>(_dbConnection.BeginTransaction);
     }
 
     public T GetRepository<T>() where T : class
     {
-        var repositoryType = typeof(T);
+        if (_repositories.TryGetValue(typeof(T), out var repository))
+            return (T)repository;
 
-        if (_repositories.TryGetValue(repositoryType, out var foundRepository))
-        {
-            return (T)foundRepository;
-        }
-        else
-        {
-            var newRepository = Activator.CreateInstance(repositoryType, _lazyTransaction.Value) as T
-                ?? throw new InvalidOperationException("Repository could not be created.");
+        if (!_repositoryFactories.TryGetValue(typeof(T), out var factory))
+            throw new InvalidOperationException($"No repository implementation found for {typeof(T).Name}");
 
-            _repositories.Add(repositoryType, newRepository);
-            return newRepository;
-        }
+        var repositoryInstance = factory(_provider, [_transaction.Value]) as T
+            ?? throw new InvalidOperationException($"Failed to create repository instance for {typeof(T).Name}");
+
+        _repositories.Add(typeof(T), repositoryInstance);
+        return repositoryInstance;
     }
 
     public void Commit()
     {
-        if (!_lazyTransaction.IsValueCreated)
+        if (!_transaction.IsValueCreated)
             return;
 
         try
         {
-            _lazyTransaction.Value.Commit();
+            _transaction.Value.Commit();
         }
         catch
         {
-            _lazyTransaction.Value.Rollback();
+            _transaction.Value.Rollback();
             throw;
         }
-        finally
-        {
-            ResetUnitOfWork();
-        }
-    }
-
-    public void Rollback()
-    {
-        if (!_lazyTransaction.IsValueCreated)
-            return;
-
-        _lazyTransaction.Value.Rollback();
 
         ResetUnitOfWork();
     }
 
-    private void ResetUnitOfWork()
+    public void Rollback()
     {
-        if (_lazyTransaction.IsValueCreated)
-            _lazyTransaction.Value.Dispose();
+        if (!_transaction.IsValueCreated)
+            return;
 
-        _lazyTransaction = new Lazy<IDbTransaction>(_connection.BeginTransaction);
+        _transaction.Value.Rollback();
 
-        _repositories.Clear();
+        ResetUnitOfWork();
     }
 
     public void Dispose()
     {
+        if (_transaction.IsValueCreated)
+            _transaction.Value.Dispose();
+    }
 
-        if (_lazyTransaction.IsValueCreated)
-            _lazyTransaction.Value.Dispose();
+    private void ResetUnitOfWork()
+    {
+        if (_transaction.IsValueCreated)
+            _transaction.Value.Dispose();
 
         _repositories.Clear();
+        _transaction = new Lazy<IDbTransaction>(_dbConnection.BeginTransaction);
     }
 }

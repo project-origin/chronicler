@@ -29,14 +29,14 @@ public static class IConfigurationExtensions
         }
     }
 
-    public static IRepositoryUpgrader GetRepositoryUpgrader(this IConfiguration configuration, Serilog.ILogger logger)
+    public static IDatebaseUpgrader GetDatabaseUpgrader(this IConfiguration configuration, Serilog.ILogger logger, Action<IDataPersistenceConfigurationBuilder> options)
     {
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddSerilog(logger);
-        services.ConfigurePostgresPersistence(configuration);
+        services.ConfigurePostgresPersistence(configuration, options);
         using var serviceProvider = services.BuildServiceProvider();
-        return serviceProvider.GetRequiredService<IRepositoryUpgrader>();
+        return serviceProvider.GetRequiredService<IDatebaseUpgrader>();
     }
 
     public static WebApplication BuildApp<T>(this IConfigurationRoot configuration)

@@ -1,6 +1,6 @@
 namespace ProjectOrigin.ServiceCommon.DataPersistence;
 
-public interface IRepositoryUpgrader
+public interface IDatebaseUpgrader
 {
     Task Upgrade();
     Task<bool> IsUpgradeRequired();

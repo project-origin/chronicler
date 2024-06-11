@@ -26,7 +26,10 @@ try
     if (args.Contains("--migrate"))
     {
         Log.Information("Starting repository migration.");
-        await configuration.GetRepositoryUpgrader(Log.Logger).Upgrade();
+        await configuration.GetDatabaseUpgrader(Log.Logger, (options) =>
+        {
+            options.AddScriptsFromAssemblyWithType<Startup>();
+        }).Upgrade();
         Log.Information("Repository migrated successfully.");
     }
 
@@ -35,7 +38,7 @@ try
         Log.Information("Starting server.");
         WebApplication app = configuration.BuildApp<Startup>();
 
-        var upgrader = app.Services.GetRequiredService<IRepositoryUpgrader>();
+        var upgrader = app.Services.GetRequiredService<IDatebaseUpgrader>();
         if (await upgrader.IsUpgradeRequired())
             throw new InvalidOperationException("Repository is not up to date. Please run with --migrate first.");
 

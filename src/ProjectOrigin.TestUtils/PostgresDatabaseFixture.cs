@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
@@ -48,7 +49,7 @@ public class PostgresDatabaseFixture<TScriptAssembly> : IAsyncLifetime
         var upgrader = new PostgresUpgrader(mockLogger.Object, Options.Create(new PostgresOptions
         {
             ConnectionString = _postgreSqlContainer.GetConnectionString()
-        }), typeof(TScriptAssembly).Assembly);
+        }), new List<Assembly> { typeof(TScriptAssembly).Assembly });
         await upgrader.Upgrade();
     }
 

@@ -7,22 +7,22 @@ using Microsoft.Extensions.Options;
 
 namespace ProjectOrigin.ServiceCommon.DataPersistence.Postgres;
 
-public class PostgresUpgrader : IRepositoryUpgrader
+public class PostgresUpgrader : IDatebaseUpgrader
 {
     private static TimeSpan _sleepTime = TimeSpan.FromSeconds(5);
     private static TimeSpan _timeout = TimeSpan.FromMinutes(5);
-    private readonly Assembly? _databaseScriptsAssembly;
+    private readonly IEnumerable<Assembly> _databaseScriptsAssemblies;
     private readonly ILogger<PostgresUpgrader> _logger;
     private readonly string _connectionString;
 
     public PostgresUpgrader(
         ILogger<PostgresUpgrader> logger,
         IOptions<PostgresOptions> configuration,
-        Assembly? databaseScriptsAssembly = null)
+        IEnumerable<Assembly> databaseScriptsAssemblies)
     {
         _logger = logger;
         _connectionString = configuration.Value.ConnectionString;
-        _databaseScriptsAssembly = databaseScriptsAssembly;
+        _databaseScriptsAssemblies = databaseScriptsAssemblies;
     }
 
     public async Task<bool> IsUpgradeRequired()
@@ -65,7 +65,7 @@ public class PostgresUpgrader : IRepositoryUpgrader
                     .PostgresqlDatabase(connectionString)
                     .WithTransaction();
 
-        if (_databaseScriptsAssembly != null)
+        foreach (var _databaseScriptsAssembly in _databaseScriptsAssemblies)
             engineBuilder = engineBuilder.WithScriptsEmbeddedInAssembly(_databaseScriptsAssembly);
 
         return engineBuilder.LogTo(new LoggerWrapper(_logger))

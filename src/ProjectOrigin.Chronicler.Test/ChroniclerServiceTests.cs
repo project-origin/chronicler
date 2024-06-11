@@ -57,6 +57,7 @@ public class ChroniclerServiceTests : TestServerBase<Startup>, IClassFixture<Tes
         // Act
         var result = await client.RegisterClaimIntentAsync(request);
 
+        // Assert
         result.Signature.Should().NotBeNull();
         result.Signature.Should().NotBeEmpty();
         result.Signature.Should().BeEquivalentTo(CalculateSignature(request.CertificateId, commitmentInfo, _privateKey));

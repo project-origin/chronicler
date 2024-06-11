@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,10 +23,13 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.ConfigureDefaultOtlp(_configuration);
-        services.ConfigurePostgresPersistence(_configuration, Assembly.GetExecutingAssembly());
         services.ConfigureGrpc(_configuration);
+        services.ConfigurePostgresPersistence(_configuration, (options) =>
+        {
+            options.AddScriptsFromAssemblyWithType<Startup>();
+            options.AddRepository<IChroniclerRepository, ChroniclerRepository>();
+        });
 
-        services.AddScoped<IChroniclerRepository, ChroniclerRepository>();
         services.AddOptions<ChroniclerOptions>()
             .BindConfiguration(ChroniclerOptions.SectionPrefix)
             .ValidateDataAnnotations()

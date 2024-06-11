@@ -38,7 +38,6 @@ public class ChroniclerService : V1.RegistryService.RegistryServiceBase
         };
 
         await _unitOfWork.GetRepository<IChroniclerRepository>().InsertClaimIntent(claimIntent);
-
         _unitOfWork.Commit();
 
         var obj = new V1.ClaimIntent()
