@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace ProjectOrigin.TestUtils;
+namespace ProjectOrigin.TestCommon;
 
 public static class TempFile
 {

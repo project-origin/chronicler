@@ -21,7 +21,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace ProjectOrigin.TestUtils.Fixtures.ServerAuxiliaries
+namespace ProjectOrigin.TestCommon.Fixtures.ServerAuxiliaries
 {
     internal class TestServerContext<TStartup> : IDisposable where TStartup : class
     {

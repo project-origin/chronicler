@@ -3,7 +3,7 @@ using Grpc.Core.Interceptors;
 using System.Threading.Tasks;
 using Grpc.Core;
 
-namespace ProjectOrigin.TestUtils.Fixtures.ServerAuxiliaries;
+namespace ProjectOrigin.TestCommon.Fixtures.ServerAuxiliaries;
 
 internal class ExceptionInterceptor : Interceptor
 {

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectOrigin.Chronicler.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectOrigin.ServiceCommon", "ProjectOrigin.ServiceCommon\ProjectOrigin.ServiceCommon.csproj", "{C8FE2F8B-176E-4376-876A-45D9F42D89AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectOrigin.TestUtils", "ProjectOrigin.TestUtils\ProjectOrigin.TestUtils.csproj", "{6A64052A-4B01-4188-82E1-AF34888E2E2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectOrigin.TestCommon", "ProjectOrigin.TestCommon\ProjectOrigin.TestCommon.csproj", "{6A64052A-4B01-4188-82E1-AF34888E2E2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

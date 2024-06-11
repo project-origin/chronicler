@@ -1,6 +1,6 @@
 using System;
 
-namespace ProjectOrigin.TestUtils.Fixtures.ServerAuxiliaries;
+namespace ProjectOrigin.TestCommon.Fixtures.ServerAuxiliaries;
 
 public class GrpcServerException : Exception
 {

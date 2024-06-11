@@ -26,10 +26,10 @@ using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ProjectOrigin.TestUtils.Fixtures.ServerAuxiliaries;
+using ProjectOrigin.TestCommon.Fixtures.ServerAuxiliaries;
 using Xunit.Abstractions;
 
-namespace ProjectOrigin.TestUtils.Fixtures
+namespace ProjectOrigin.TestCommon.Fixtures
 {
     public delegate void LogMessage(LogLevel logLevel, string categoryName, EventId eventId, string message, Exception? exception);
 

@@ -11,7 +11,7 @@ using ProjectOrigin.ServiceCommon.DataPersistence.Postgres;
 using Testcontainers.PostgreSql;
 using Xunit;
 
-namespace ProjectOrigin.TestUtils.Fixtures;
+namespace ProjectOrigin.TestCommon.Fixtures;
 
 public class PostgresDatabaseFixture<TScriptAssembly> : IAsyncLifetime
 {

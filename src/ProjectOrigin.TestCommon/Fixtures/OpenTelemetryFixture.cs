@@ -3,7 +3,7 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Xunit;
 
-namespace ProjectOrigin.TestUtils.Fixtures;
+namespace ProjectOrigin.TestCommon.Fixtures;
 
 public class OpenTelemetryFixture : IAsyncLifetime
 {

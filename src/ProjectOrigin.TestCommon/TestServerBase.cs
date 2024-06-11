@@ -4,10 +4,10 @@ using Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using Grpc.Core.Interceptors;
 using Grpc.Core;
-using ProjectOrigin.TestUtils.Fixtures;
-using ProjectOrigin.TestUtils.Fixtures.ServerAuxiliaries;
+using ProjectOrigin.TestCommon.Fixtures;
+using ProjectOrigin.TestCommon.Fixtures.ServerAuxiliaries;
 
-namespace ProjectOrigin.TestUtils;
+namespace ProjectOrigin.TestCommon;
 
 public abstract class TestServerBase<TStartup> : IClassFixture<TestServerFixture<TStartup>>, IDisposable where TStartup : class
 {

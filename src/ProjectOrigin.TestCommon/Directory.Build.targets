@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <PackageId>ProjectOrigin.TestUtils</PackageId>
+    <PackageId>ProjectOrigin.TestCommon</PackageId>
     <Company>Project-Origin</Company>
     <PackageTags>Project Origin;ProjectOrigin</PackageTags>
     <Description>This library contains helper classes to write gRPC integration tests.</Description>

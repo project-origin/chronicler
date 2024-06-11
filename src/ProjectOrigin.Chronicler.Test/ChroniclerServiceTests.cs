@@ -7,8 +7,8 @@ using ProjectOrigin.Chronicler.Server;
 using ProjectOrigin.HierarchicalDeterministicKeys;
 using ProjectOrigin.HierarchicalDeterministicKeys.Interfaces;
 using ProjectOrigin.PedersenCommitment;
-using ProjectOrigin.TestUtils;
-using ProjectOrigin.TestUtils.Fixtures;
+using ProjectOrigin.TestCommon;
+using ProjectOrigin.TestCommon.Fixtures;
 using Xunit;
 using Xunit.Abstractions;
 
