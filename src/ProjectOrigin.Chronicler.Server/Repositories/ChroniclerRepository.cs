@@ -4,6 +4,9 @@ using Dapper;
 using ProjectOrigin.Chronicler.Server.Models;
 using ProjectOrigin.ServiceCommon.Database;
 using ProjectOrigin.WalletSystem.Server.Repositories;
+
+namespace ProjectOrigin.WalletSystem.Server.Repositories;
+
 public class ChroniclerRepository : AbstractRepository, IChroniclerRepository
 {
     public ChroniclerRepository(IDbTransaction transaction) : base(transaction) { }

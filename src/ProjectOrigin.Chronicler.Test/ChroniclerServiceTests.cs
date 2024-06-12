@@ -63,7 +63,7 @@ public class ChroniclerServiceTests : TestServerBase<Startup>, IClassFixture<Tes
         result.Signature.Should().BeEquivalentTo(CalculateSignature(request.CertificateId, commitmentInfo, _privateKey));
     }
 
-    private byte[] CalculateSignature(Common.V1.FederatedStreamId federatedStreamId, SecretCommitmentInfo commitmentInfo, IPrivateKey privateKey)
+    private static byte[] CalculateSignature(Common.V1.FederatedStreamId federatedStreamId, SecretCommitmentInfo commitmentInfo, IPrivateKey privateKey)
     {
         V1.ClaimIntent claimIntent = new()
         {

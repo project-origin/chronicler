@@ -12,7 +12,7 @@ public record ChroniclerOptions : IValidatableObject
 
     public required string SigningKeyFilename { get; init; }
 
-    private Lazy<IPrivateKey> _privateKey;
+    private readonly Lazy<IPrivateKey> _privateKey;
 
     public IPrivateKey GetPrivateKey() => _privateKey.Value;
 
