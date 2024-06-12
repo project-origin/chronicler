@@ -9,10 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProjectOrigin.ServiceCommon\ProjectOrigin.ServiceCommon.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="ProjectOrigin.ServiceCommon" Version="1.0.0-rc.1" />
     <PackageReference Include="ProjectOrigin.PedersenCommitment" Version="1.1.1" />
     <PackageReference Include="ProjectOrigin.HierarchicalDeterministicKeys" Version="1.0.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.62.0" />
