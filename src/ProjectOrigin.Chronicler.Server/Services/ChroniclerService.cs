@@ -8,7 +8,9 @@ using ProjectOrigin.Chronicler.Server.Options;
 using ProjectOrigin.HierarchicalDeterministicKeys.Interfaces;
 using ProjectOrigin.PedersenCommitment;
 using ProjectOrigin.ServiceCommon.Database;
-using ProjectOrigin.WalletSystem.Server.Repositories;
+using ProjectOrigin.Chronicler.Server.Repositories;
+using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
 
 namespace ProjectOrigin.Chronicler.Server.Services;
 
@@ -34,7 +36,7 @@ public class ChroniclerService : V1.RegistryService.RegistryServiceBase
             CertificateId = Guid.Parse(request.CertificateId.StreamId.Value),
             Quantity = request.Quantity,
             RandomR = randomR,
-            Commitment = commitmentInfo.Commitment.C.ToArray(),
+            CommitmentHash = SHA256.HashData(commitmentInfo.Commitment.C),
         };
 
         await _unitOfWork.GetRepository<IChroniclerRepository>().InsertClaimIntent(claimIntent);
