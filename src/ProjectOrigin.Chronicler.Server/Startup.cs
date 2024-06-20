@@ -7,7 +7,7 @@ using ProjectOrigin.Chronicler.Server.Services;
 using ProjectOrigin.ServiceCommon.Database;
 using ProjectOrigin.ServiceCommon.Grpc;
 using ProjectOrigin.ServiceCommon.Otlp;
-using ProjectOrigin.WalletSystem.Server.Repositories;
+using ProjectOrigin.Chronicler.Server.Repositories;
 
 namespace ProjectOrigin.Chronicler.Server;
 
