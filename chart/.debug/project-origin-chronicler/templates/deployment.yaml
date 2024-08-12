@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: po-chronicler-deployment
+  namespace: NAMESPACE
+  labels:
+    app: po-chronicler
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: po-chronicler
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: po-chronicler
+    spec:
+      serviceAccountName: chronicler-migration-waiter
+      initContainers:
+        - name: wait-for-migration
+          image: groundnuty/k8s-wait-for:v2.0
+          args:
+            - "job"
+            - "po-chronicler-migrate-job-0-1-0"
+      containers:
+        - name: po-chronicler
+          image: ghcr.io/project-origin/chronicler:0.1.0
+          args:
+            - "--serve"
+          env:
+            # Database Configuration
+            - name: DB_HOST
+              value: "_"
+            - name: DB_PORT
+              value: "_"
+            - name: DB_DATABASE
+              value: "_"
+            - name: DB_USERNAME
+              value: "_"
+            - name: DB_PASSWORD
+              value: "_"
+
+            # OpenTelemetry Collector Configuration
+            - name: Otlp__Enabled
+              value: "false"
+            - name: Otlp__Endpoint
+              value: http://opentelemetry-collector.otel-collector:4317
+
+            # Chronicler Configuration
+            - name: NetworkConfigurationUri
+              value: /etc/config/networkConfiguration.json
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+              subPath: networkConfiguration.json
+
+      volumes:
+        - name: config-volume
+          configMap:
+            name: po-chronicler-deployment-config
+            items:
+              - key: networkConfiguration.json
+                path: networkConfiguration.json

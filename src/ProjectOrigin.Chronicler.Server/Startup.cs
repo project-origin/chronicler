@@ -7,7 +7,11 @@ using ProjectOrigin.Chronicler.Server.Services;
 using ProjectOrigin.ServiceCommon.Database;
 using ProjectOrigin.ServiceCommon.Grpc;
 using ProjectOrigin.ServiceCommon.Otlp;
-using ProjectOrigin.WalletSystem.Server.Repositories;
+using ProjectOrigin.Chronicler.Server.Repositories;
+using Microsoft.Extensions.Options;
+using ProjectOrigin.ServiceCommon.UriOptionsLoader;
+using ProjectOrigin.Chronicler.Server.BlockReader;
+using ProjectOrigin.ServiceCommon.Database.Postgres;
 
 namespace ProjectOrigin.Chronicler.Server;
 
@@ -30,10 +34,19 @@ public class Startup
             options.AddRepository<IChroniclerRepository, ChroniclerRepository>();
         });
 
+        services.AddSingleton<IRegistryClientFactory, RegistryClientFactory>();
+        services.AddTransient<IRegistryService, RegistryService>();
+
         services.AddOptions<ChroniclerOptions>()
             .BindConfiguration(ChroniclerOptions.SectionPrefix)
             .ValidateDataAnnotations()
             .ValidateOnStart();
+
+        services.AddHostedService<BlockReaderBackgroundService>();
+        services.AddTransient<IBlockReaderJob, BlockReaderJob>();
+
+        services.AddHttpClient();
+        services.ConfigureUriOptionsLoader<NetworkOptions>("network");
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

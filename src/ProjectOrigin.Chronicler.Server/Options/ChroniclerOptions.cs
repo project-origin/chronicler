@@ -11,10 +11,12 @@ public record ChroniclerOptions : IValidatableObject
     public const string SectionPrefix = "chronicler";
 
     public required string SigningKeyFilename { get; init; }
-
-    private readonly Lazy<IPrivateKey> _privateKey;
+    public required TimeSpan JobInterval { get; init; }
+    public IEnumerable<string> GridAreas { get; init; } = new List<string>();
 
     public IPrivateKey GetPrivateKey() => _privateKey.Value;
+
+    private readonly Lazy<IPrivateKey> _privateKey;
 
     public ChroniclerOptions()
     {

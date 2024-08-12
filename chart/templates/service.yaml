@@ -11,5 +11,9 @@ spec:
   ports:
     - name: rest
       protocol: TCP
-      port: 5000
+      port: {{ .Values.service.httpPort }}
       targetPort: 5000
+    - name: grpc
+      protocol: TCP
+      port: {{ .Values.service.grpcPort }}
+      targetPort: 5001

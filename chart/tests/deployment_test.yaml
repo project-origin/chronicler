@@ -1,0 +1,98 @@
+suite: Test Suite for Chronicler Chart
+
+templates:
+  - deployment.yaml
+
+set:
+  config:
+    networkConfigurationUri: "_"
+  postgresql:
+    host: "_"
+    port: "_"
+    database: "_"
+    username: "_"
+    password: "_"
+
+tests:
+  - it: should set PostgreSQL configuration
+    set:
+      postgresql:
+        host: "localhost"
+        port: "1234"
+        database: "someDatabase"
+        username:
+          configMapRef:
+            name: "someUsernameName"
+            key: "someUsernameKey"
+        password:
+          secretRef:
+            name: "somePasswordName"
+            key: "somePasswordKey"
+    asserts:
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="DB_HOST")].value
+          pattern: "localhost"
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="DB_PORT")].value
+          pattern: "1234"
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="DB_DATABASE")].value
+          pattern: "someDatabase"
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="DB_USERNAME")].valueFrom.configMapKeyRef.name
+          pattern: "someUsernameName"
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="DB_USERNAME")].valueFrom.configMapKeyRef.key
+          pattern: "someUsernameKey"
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="DB_PASSWORD")].valueFrom.secretKeyRef.name
+          pattern: "somePasswordName"
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="DB_PASSWORD")].valueFrom.secretKeyRef.key
+          pattern: "somePasswordKey"
+  - it: should set network configuration correctly when networkConfigurationUri is set
+    set:
+      config:
+        networkConfigurationUri: "http://example.com"
+    asserts:
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="NetworkConfigurationUri")].value
+          pattern: "http://example.com"
+  - it: should add a volume and volume mount for network configuration when networkConfigurationFile is set
+    set:
+      config:
+        networkConfigurationFile: |-
+          {
+            "RegistryUrls": {
+              "narnia": "https://narnia.com",
+            }
+          }
+    asserts:
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="NetworkConfigurationUri")].value
+          pattern: "/etc/config/networkConfiguration.json"
+      - matchRegex:
+          path: spec.template.spec.containers[0].volumeMounts[1].name
+          pattern: "config-volume"
+      - matchRegex:
+          path: spec.template.spec.volumes[?(@.name=="config-volume")].configMap.items[0].key
+          pattern: "networkConfiguration.json"
+  - it: should set areas correctly
+    set:
+      config:
+        gridAreas:
+          - "area1"
+          - "area2"
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="chronicler__GridAreas__0")].value
+          pattern: "area1"
+      - matchRegex:
+          path: spec.template.spec.containers[0].env[?(@.name=="chronicler__GridAreas__1")].value
+          pattern: "area2"
