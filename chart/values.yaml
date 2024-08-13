@@ -7,6 +7,22 @@ image:
   # tag defines the image tag to use, defaults to the chart appVersion
   tag:
 
+# resources holds the configuration for the resource requests and limits
+resources:
+  # requests holds the configuration for the resource requests
+  requests:
+    # cpu defines the cpu request limit for the chronicler server
+    cpu: 0.5
+    # memory defines the memory request limit for the chronicler server
+    memory: 200Mi
+
+  # limits holds the configuration for the resource limits
+  limits:
+    # cpu defines the cpu limit for the chronicler server
+    cpu:
+    # memory defines the memory limit for the chronicler server, defaults to the request memory
+    memory:
+
 # service holds the configuration for the service
 service:
   # type is the type of service to create, allowed values are (ClusterIP | LoadBalancer)

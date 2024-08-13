@@ -15,6 +15,7 @@ spec:
       containers:
         - name: po-chronicler-migrate-job
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          {{ include "limits" . | nindent 10 }}
           args:
             - "--migrate"
           env:

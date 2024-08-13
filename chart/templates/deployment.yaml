@@ -23,6 +23,12 @@ spec:
       initContainers:
         - name: wait-for-migration
           image: groundnuty/k8s-wait-for:v2.0
+          resources:
+            requests:
+              cpu: 0.1
+              memory: 50Mi
+            limits:
+              memory: 50Mi
           args:
             - "job"
             - "po-chronicler-migrate-job-{{ .Values.image.tag | default .Chart.AppVersion | replace "." "-" }}"
@@ -33,6 +39,7 @@ spec:
       containers:
         - name: po-chronicler
           image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+          {{ include "limits" . | nindent 10 }}
           args:
             - "--serve"
           env:
