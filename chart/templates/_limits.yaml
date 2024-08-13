@@ -4,6 +4,8 @@ resources:
     cpu: {{ .Values.resources.requests.cpu }}
     memory: {{ .Values.resources.requests.memory }}
   limits:
-    #cpu: {{ .Values.resources.limits.cpu }}
+    {{- if .Values.resources.limits.cpu }}
+    cpu: {{ .Values.resources.limits.cpu }}
+    {{- end -}}
     memory: {{ .Values.resources.limits.memory | default .Values.resources.requests.memory }}
 {{- end -}}
