@@ -60,7 +60,7 @@ tests:
       - isKind:
           of: Deployment
       - matchRegex:
-          path: spec.template.spec.containers[0].env[?(@.name=="NetworkConfigurationUri")].value
+          path: spec.template.spec.containers[0].env[?(@.name=="network__ConfigurationUri")].value
           pattern: "http://example.com"
   - it: should add a volume and volume mount for network configuration when networkConfigurationFile is set
     set:
@@ -75,11 +75,11 @@ tests:
       - isKind:
           of: Deployment
       - matchRegex:
-          path: spec.template.spec.containers[0].env[?(@.name=="NetworkConfigurationUri")].value
+          path: spec.template.spec.containers[0].env[?(@.name=="network__ConfigurationUri")].value
           pattern: "/etc/config/networkConfiguration.json"
       - matchRegex:
-          path: spec.template.spec.containers[0].volumeMounts[1].name
-          pattern: "config-volume"
+          path: spec.template.spec.containers[0].volumeMounts[?(@.name=="config-volume")].mountPath
+          pattern: "/etc/config"
       - matchRegex:
           path: spec.template.spec.volumes[?(@.name=="config-volume")].configMap.items[0].key
           pattern: "networkConfiguration.json"

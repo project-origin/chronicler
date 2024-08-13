@@ -19,12 +19,17 @@ spec:
         app: po-chronicler
     spec:
       serviceAccountName: chronicler-migration-waiter
+      automountServiceAccountToken: false
       initContainers:
         - name: wait-for-migration
           image: groundnuty/k8s-wait-for:v2.0
           args:
             - "job"
             - "po-chronicler-migrate-job-{{ .Values.image.tag | default .Chart.AppVersion | replace "." "-" }}"
+            - "-n {{ .Release.Namespace }}"
+          volumeMounts:
+            - name: service-account-token
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
       containers:
         - name: po-chronicler
           image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
@@ -41,10 +46,10 @@ spec:
 
             # Chronicler Configuration
             {{- if .Values.config.networkConfigurationFile }}
-            - name: NetworkConfigurationUri
-              value: /etc/config/networkConfiguration.json
+            - name: network__ConfigurationUri
+              value: file:///etc/config/networkConfiguration.json
             {{- else if .Values.config.networkConfigurationUri }}
-            - name: NetworkConfigurationUri
+            - name: network__ConfigurationUri
               value: {{ .Values.config.networkConfigurationUri }}
             {{- else }}
               {{ fail "No network configuration provided" }}
@@ -53,36 +58,47 @@ spec:
             - name: chronicler__JobInterval
               value: {{ .Values.config.jobInterval }}
 
-            - name: chronicler__SigningKey
-              value: /etc/secret/signing-key
+            - name: chronicler__SigningKeyFilename
+              value: &signingKeyFilename /etc/secret/signing-key
 
             {{- range $i, $area := .Values.config.gridAreas }}
             - name: chronicler__GridAreas__{{ $i }}
               value: {{ $area }}
             {{- end }}
           volumeMounts:
-            - name: signing-key-volume
-              mountPath: /etc/secret
-              subPath: signing-key
+            - name: service-account-token
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              readOnly: true
+            - name: &signingKeyVolumeName signing-key-volume
+              mountPath: *signingKeyFilename
+              subPath: &signingKeyVolumePath signing-key
             {{- if .Values.config.networkConfigurationFile }}
-            - name: config-volume
-              mountPath: /etc/config
-              subPath: networkConfiguration.json
+            - name: &networkConfigVolumeName config-volume
+              mountPath: /etc/config/networkConfiguration.json
+              subPath:  &networkConfigSubPath networkConfiguration.json
             {{- end }}
-
-
       volumes:
-        - name: signing-key-volume
+        - name: service-account-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+              - configMap:
+                  name: kube-root-ca.crt
+                  items:
+                    - key: ca.crt
+                      path: ca.crt
+        - name: *signingKeyVolumeName
           secret:
             secretName: {{ .Values.config.signingKeySecret.name }}
             items:
               - key: {{ .Values.config.signingKeySecret.key }}
-                path: signing-key
+                path: *signingKeyVolumePath
         {{- if .Values.config.networkConfigurationFile }}
-        - name: config-volume
+        - name: *networkConfigVolumeName
           configMap:
             name: po-chronicler-deployment-config
             items:
-              - key: networkConfiguration.json
-                path: networkConfiguration.json
+              - key: *networkConfigSubPath
+                path: *networkConfigSubPath
         {{- end }}
