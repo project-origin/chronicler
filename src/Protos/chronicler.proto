@@ -4,7 +4,7 @@ import "common.proto";
 
 package project_origin.chronicler.v1;
 
-service RegistryService {
+service ChroniclerService {
     // Register an intent to claim a certificate
     rpc RegisterClaimIntent (ClaimIntentRequest) returns (ClaimIntentResponse);
 }

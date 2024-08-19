@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
@@ -18,18 +20,26 @@ public class ChroniclerServiceTests : TestServerBase<Startup>, IClassFixture<Tes
 {
     private readonly Fixture _fixture = new();
     private readonly IPrivateKey _privateKey = Algorithms.Ed25519.GenerateNewPrivateKey();
-    private readonly PostgresDatabaseFixture<Startup> _databaseFixture;
 
     public ChroniclerServiceTests(
         TestServerFixture<Startup> serverFixture,
         PostgresDatabaseFixture<Startup> databaseFixture,
         ITestOutputHelper outputHelper) : base(serverFixture, outputHelper)
     {
-        _databaseFixture = databaseFixture;
+        var path = TempFile.WriteAllText(JsonSerializer.Serialize(new
+        {
+            RegistryUrls = new Dictionary<string, string>
+            {
+            }
+        }));
+
         serverFixture.ConfigureHostConfiguration(new()
         {
-            { "ConnectionStrings:Database", databaseFixture.HostConnectionString },
+            { "ConnectionStrings:Database", databaseFixture.HostConnectionString},
             { "Chronicler:SigningKeyFilename", TempFile.WriteAllText(_privateKey.ExportPkixText()) },
+            { "Chronicler:JobInterval", "00:15:00" },
+            { "Network:ConfigurationUri",  "file://"+path },
+            { "Network:RefreshInterval", "00:15:00" },
         });
     }
 
@@ -39,7 +49,7 @@ public class ChroniclerServiceTests : TestServerBase<Startup>, IClassFixture<Tes
         // Arrange
         var registryName = _fixture.Create<string>();
         var certId = _fixture.Create<Guid>();
-        var client = new V1.RegistryService.RegistryServiceClient(Channel);
+        var client = new V1.ChroniclerService.ChroniclerServiceClient(Channel);
         var quantity = _fixture.Create<int>();
         var commitmentInfo = new SecretCommitmentInfo((uint)quantity);
 

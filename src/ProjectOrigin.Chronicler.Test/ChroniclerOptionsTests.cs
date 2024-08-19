@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -16,7 +17,8 @@ namespace ProjectOrigin.Chronicler.Test
             // Arrange
             var options = new ChroniclerOptions()
             {
-                SigningKeyFilename = string.Empty
+                SigningKeyFilename = string.Empty,
+                JobInterval = TimeSpan.FromMinutes(1)
             };
 
             // Act
@@ -34,7 +36,8 @@ namespace ProjectOrigin.Chronicler.Test
             // Arrange
             var options = new ChroniclerOptions()
             {
-                SigningKeyFilename = "example.key"
+                SigningKeyFilename = "example.key",
+                JobInterval = TimeSpan.FromMinutes(1)
             };
 
             // Act
@@ -53,7 +56,8 @@ namespace ProjectOrigin.Chronicler.Test
             var filename = Path.GetTempFileName();
             var options = new ChroniclerOptions()
             {
-                SigningKeyFilename = filename
+                SigningKeyFilename = filename,
+                JobInterval = TimeSpan.FromMinutes(1)
             };
             var data = "invalid data";
             File.WriteAllText(filename, data);
@@ -75,7 +79,8 @@ namespace ProjectOrigin.Chronicler.Test
             var filename = Path.GetTempFileName();
             var options = new ChroniclerOptions()
             {
-                SigningKeyFilename = filename
+                SigningKeyFilename = filename,
+                JobInterval = TimeSpan.FromMinutes(1)
             };
             var data = key.ExportPkixText();
             File.WriteAllText(filename, data);

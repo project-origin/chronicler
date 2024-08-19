@@ -1,0 +1,36 @@
+suite: Test Suite for Chronicler Chart
+
+templates:
+  - network-config.yaml
+
+set:
+  postgresql:
+    host: "_"
+    port: "_"
+    database: "_"
+    username: "_"
+    password: "_"
+
+tests:
+  - it: should create a ConfigMap for network configuration
+    set:
+      config:
+        networkConfigurationFile: |-
+          {
+            "RegistryUrls": {
+              "narnia": "https://narnia.com",
+            }
+          }
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+
+  - it: should not create a ConfigMap for network configuration when networkConfigurationFile is not set
+    set:
+      config:
+        networkConfigurationUri: "https://narnia.com"
+    asserts:
+      - hasDocuments:
+          count: 0

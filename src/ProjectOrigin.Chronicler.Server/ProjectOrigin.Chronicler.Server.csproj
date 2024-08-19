@@ -6,10 +6,11 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
+    <AssemblyName Condition="'$(CustomAssemblyName)' != ''">$(CustomAssemblyName)</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ProjectOrigin.ServiceCommon" Version="1.0.0-rc.1" />
+    <PackageReference Include="ProjectOrigin.ServiceCommon" Version="1.0.0-rc.2" />
     <PackageReference Include="ProjectOrigin.PedersenCommitment" Version="1.1.1" />
     <PackageReference Include="ProjectOrigin.HierarchicalDeterministicKeys" Version="1.0.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.62.0" />
@@ -27,6 +28,12 @@
 
   <ItemGroup>
     <Protobuf Include="../Protos/chronicler.proto" GrpcServices="Both" />
+    <Protobuf Include="../Protos/registry.proto" Link="Protos\registry.proto">
+      <SourceUrl>https://raw.githubusercontent.com/project-origin/registry/v1.3.0/src/Protos/registry.proto</SourceUrl>
+    </Protobuf>
+    <Protobuf Include="../Protos/electricity.proto" Link="Protos\electricity.proto">
+      <SourceUrl>https://raw.githubusercontent.com/project-origin/registry/v1.1.0/src/Protos/electricity.proto</SourceUrl>
+    </Protobuf>
     <Protobuf Include="../Protos/common.proto" Link="Protos\common.proto">
       <SourceUrl>https://raw.githubusercontent.com/project-origin/registry/v1.3.0/src/Protos/common.proto</SourceUrl>
     </Protobuf>
