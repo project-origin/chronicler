@@ -7,11 +7,9 @@ using ProjectOrigin.Chronicler.Server.Services;
 using ProjectOrigin.ServiceCommon.Database;
 using ProjectOrigin.ServiceCommon.Grpc;
 using ProjectOrigin.ServiceCommon.Otlp;
-using ProjectOrigin.Chronicler.Server.Repositories;
-using Microsoft.Extensions.Options;
 using ProjectOrigin.ServiceCommon.UriOptionsLoader;
+using ProjectOrigin.Chronicler.Server.Repositories;
 using ProjectOrigin.Chronicler.Server.BlockReader;
-using ProjectOrigin.ServiceCommon.Database.Postgres;
 
 namespace ProjectOrigin.Chronicler.Server;
 
