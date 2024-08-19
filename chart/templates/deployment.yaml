@@ -22,17 +22,20 @@ spec:
       automountServiceAccountToken: false
       initContainers:
         - name: wait-for-migration
-          image: groundnuty/k8s-wait-for:v2.0
+          image: bitnami/kubectl:1.30.4
           resources:
             requests:
               cpu: 0.1
-              memory: 50Mi
             limits:
               memory: 50Mi
-          args:
-            - "job"
-            - "po-chronicler-migrate-job-{{ .Values.image.tag | default .Chart.AppVersion | replace "." "-" }}"
-            - "-n {{ .Release.Namespace }}"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl wait --for=condition=complete job/${JOB_NAME} --timeout=300s -n {{ .Release.Namespace }}
+          env:
+            - name: JOB_NAME
+              value: po-chronicler-migrate-job-{{ .Values.image.tag | default .Chart.AppVersion | replace "." "-" }}
           volumeMounts:
             - name: service-account-token
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
@@ -48,8 +51,10 @@ spec:
             # OpenTelemetry Collector Configuration
             - name: Otlp__Enabled
               value: {{ .Values.otlp.enabled | quote }}
+            {{- if .Values.otlp.enabled }}
             - name: Otlp__Endpoint
-              value: {{ .Values.otlp.endpoint }}
+              value: {{ required "otel.endpoint is required when enabled" .Values.otlp.endpoint | quote }}
+            {{- end }}
 
             # Chronicler Configuration
             {{- if .Values.config.networkConfigurationFile }}

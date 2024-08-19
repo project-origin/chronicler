@@ -12,16 +12,16 @@ resources:
   # requests holds the configuration for the resource requests
   requests:
     # cpu defines the cpu request limit for the chronicler server
-    cpu: 0.5
+    cpu: 500m
     # memory defines the memory request limit for the chronicler server
-    memory: 200Mi
+    memory:
 
   # limits holds the configuration for the resource limits
   limits:
     # cpu defines the cpu limit for the chronicler server
     cpu:
-    # memory defines the memory limit for the chronicler server, defaults to the request memory
-    memory:
+    # memory defines the memory limit for the chronicler server
+    memory: 200Mi
 
 # service holds the configuration for the service
 service:
@@ -108,4 +108,4 @@ otlp:
   # enabled determines if the opentelemetry collector is enabled
   enabled: false
   # endpoint defines the endpoint of the opentelemetry collector, example "http://otel-collector:4317"
-  endpoint: "http://opentelemetry-collector.otel-collector:4317"
+  endpoint:
