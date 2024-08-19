@@ -14,4 +14,5 @@ resources:
     {{- if .Values.resources.limits.memory }}
     memory: {{ .Values.resources.limits.memory }}
     {{- end }}
+    ephemeral-storage: "1Mi"
 {{- end -}}
