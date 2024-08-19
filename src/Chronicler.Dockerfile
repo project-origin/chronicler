@@ -1,5 +1,4 @@
 ARG PROJECT=ProjectOrigin.Chronicler.Server
-ARG USER=dotnetuser
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0.204 AS build
 ARG PROJECT
@@ -10,23 +9,16 @@ COPY ./Protos ./Protos
 COPY ./${PROJECT} ./${PROJECT}
 
 RUN dotnet restore ${PROJECT}
-RUN dotnet build ${PROJECT} -c Release --no-restore -o /app/build
-RUN dotnet publish ${PROJECT} -c Release -o /app/publish
+RUN dotnet build ${PROJECT} -c Release --no-restore -p:CustomAssemblyName=App
+RUN dotnet publish ${PROJECT} -c Release --no-build -p:CustomAssemblyName=App -o /app/publish
 
 # ------- production image -------
-FROM mcr.microsoft.com/dotnet/aspnet:8.0.4 AS production
-ARG PROJECT
-ARG USER
-
-ENV USER=dotnetuser
-ENV APPLICATION=${PROJECT}
-RUN groupadd -r "$USER" && useradd -r -g "$USER" "$USER"
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.4-jammy-chiseled-extra AS production
 
 WORKDIR /app
-COPY --chown=root:root --from=build /app/publish .
-RUN chmod -R 655 .
+COPY --from=build /app/publish .
 
-USER $USER
 EXPOSE 5000
 EXPOSE 5001
-ENTRYPOINT ["/bin/sh", "-c", "dotnet ${APPLICATION}.dll \"${@}\"", "--" ]
+
+ENTRYPOINT ["dotnet", "App.dll"]

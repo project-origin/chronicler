@@ -11,6 +11,9 @@ spec:
   template:
     spec:
       automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1654
+        runAsNonRoot: true
       restartPolicy: Never
       containers:
         - name: po-chronicler-migrate-job
@@ -20,3 +23,6 @@ spec:
             - "--migrate"
           env:
             {{- include "database.config" . | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true

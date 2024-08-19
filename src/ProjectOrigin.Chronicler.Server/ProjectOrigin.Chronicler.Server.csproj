@@ -6,6 +6,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
+    <AssemblyName Condition="'$(CustomAssemblyName)' != ''">$(CustomAssemblyName)</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -20,6 +20,9 @@ spec:
     spec:
       serviceAccountName: chronicler-migration-waiter
       automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1654
+        runAsNonRoot: true
       initContainers:
         - name: wait-for-migration
           image: bitnami/kubectl:1.30.4
@@ -33,6 +36,9 @@ spec:
             - -c
             - |
               kubectl wait --for=condition=complete job/${JOB_NAME} --timeout=300s -n {{ .Release.Namespace }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           env:
             - name: JOB_NAME
               value: po-chronicler-migrate-job-{{ .Values.image.tag | default .Chart.AppVersion | replace "." "-" }}
@@ -45,6 +51,9 @@ spec:
           {{ include "limits" . | nindent 10 }}
           args:
             - "--serve"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           env:
             {{- include "database.config" . | nindent 12 }}
 
