@@ -24,10 +24,10 @@ public class RegistryClientFactory : IRegistryClientFactory
             registryName,
             (name) =>
             {
-                if (!_optionsMonitor.CurrentValue.RegistryUrls.TryGetValue(name, out var address))
+                if (!_optionsMonitor.CurrentValue.Registries.TryGetValue(name, out var info))
                     throw new RegistryNotKnownException($"Registry {name} not found in configuration");
 
-                return GrpcChannel.ForAddress(address, new GrpcChannelOptions
+                return GrpcChannel.ForAddress(info.Url, new GrpcChannelOptions
                 {
                     HttpHandler = new SocketsHttpHandler
                     {
@@ -47,8 +47,8 @@ public class RegistryClientFactory : IRegistryClientFactory
         foreach (var record in _registries)
         {
             // If the registry is still in the configuration, and the address has changed, we need to recreate the channel
-            if (options.RegistryUrls.TryGetValue(record.Key, out var uri)
-                && record.Value.Target != uri
+            if (options.Registries.TryGetValue(record.Key, out var info)
+                && record.Value.Target != info.Url
                 && _registries.TryRemove(record.Key, out var oldChannel))
             {
                 oldChannel.ShutdownAsync().Wait();

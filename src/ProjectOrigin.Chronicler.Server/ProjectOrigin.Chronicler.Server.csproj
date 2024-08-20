@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ProjectOrigin.ServiceCommon" Version="1.0.0-rc.2" />
+    <PackageReference Include="ProjectOrigin.ServiceCommon" Version="1.0.0-rc.4" />
     <PackageReference Include="ProjectOrigin.PedersenCommitment" Version="1.1.1" />
     <PackageReference Include="ProjectOrigin.HierarchicalDeterministicKeys" Version="1.0.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.62.0" />

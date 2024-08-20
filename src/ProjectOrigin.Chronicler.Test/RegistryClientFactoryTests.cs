@@ -21,7 +21,7 @@ public class RegistryClientFactoryTests
         var mockOptionsMonitor = new Mock<IOptionsMonitor<NetworkOptions>>();
         var options = new NetworkOptions
         {
-            RegistryUrls = new Dictionary<string, string>()
+            Registries = new Dictionary<string, RegistryInfo>()
         };
         mockOptionsMonitor.Setup(m => m.CurrentValue).Returns(options);
         var factory = new RegistryClientFactory(mockOptionsMonitor.Object);
@@ -40,9 +40,9 @@ public class RegistryClientFactoryTests
         var mockOptionsMonitor = new Mock<IOptionsMonitor<NetworkOptions>>();
         var options = new NetworkOptions
         {
-            RegistryUrls = new Dictionary<string, string>{
-                {RegistryName, "http://example.com"}
-             }
+            Registries = new Dictionary<string, RegistryInfo>{
+                { RegistryName, new RegistryInfo { Url = "http://example.com" }}
+            }
         };
         mockOptionsMonitor.Setup(m => m.CurrentValue).Returns(options);
         var factory = new RegistryClientFactory(mockOptionsMonitor.Object);
@@ -61,9 +61,9 @@ public class RegistryClientFactoryTests
         var mockOptionsMonitor = new Mock<IOptionsMonitor<NetworkOptions>>();
         var options = new NetworkOptions
         {
-            RegistryUrls = new Dictionary<string, string>{
-                {RegistryName, "http://example.com"}
-             }
+            Registries = new Dictionary<string, RegistryInfo>{
+                { RegistryName, new RegistryInfo { Url = "http://example.com" }}
+            }
         };
         mockOptionsMonitor.Setup(m => m.CurrentValue).Returns(options);
         var factory = new RegistryClientFactory(mockOptionsMonitor.Object);
@@ -86,9 +86,9 @@ public class RegistryClientFactoryTests
 
         var options = new NetworkOptions
         {
-            RegistryUrls = new Dictionary<string, string>{
-                {RegistryName, "http://example.com"}
-             }
+            Registries = new Dictionary<string, RegistryInfo>{
+                { RegistryName, new RegistryInfo { Url = "http://example.com" }}
+            }
         };
         mockOptionsMonitor.Setup(m => m.CurrentValue).Returns(options);
         var factory = new RegistryClientFactory(mockOptionsMonitor.Object);
@@ -97,9 +97,9 @@ public class RegistryClientFactoryTests
         var result1 = factory.GetChannel(RegistryName);
         var options2 = new NetworkOptions
         {
-            RegistryUrls = new Dictionary<string, string>{
-                {RegistryName, "http://example.com"}
-             }
+            Registries = new Dictionary<string, RegistryInfo>{
+                { RegistryName, new RegistryInfo { Url = "http://example.com" }}
+            }
         };
         mockOptionsMonitor.Setup(m => m.CurrentValue).Returns(options);
         onChange?.Invoke(options2, null);
