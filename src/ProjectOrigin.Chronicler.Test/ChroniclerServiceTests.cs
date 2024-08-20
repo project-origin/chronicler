@@ -6,6 +6,7 @@ using AutoFixture;
 using FluentAssertions;
 using Google.Protobuf;
 using ProjectOrigin.Chronicler.Server;
+using ProjectOrigin.Chronicler.Server.Options;
 using ProjectOrigin.HierarchicalDeterministicKeys;
 using ProjectOrigin.HierarchicalDeterministicKeys.Interfaces;
 using ProjectOrigin.PedersenCommitment;
@@ -28,10 +29,11 @@ public class ChroniclerServiceTests : TestServerBase<Startup>, IClassFixture<Tes
     {
         var path = TempFile.WriteAllText(JsonSerializer.Serialize(new
         {
-            RegistryUrls = new Dictionary<string, string>
+            Registries = new Dictionary<string, RegistryInfo>
             {
+                { "ExampleRegistry", new RegistryInfo { Url = "http://example.com" }}
             }
-        }));
+        }), ".json");
 
         serverFixture.ConfigureHostConfiguration(new()
         {
