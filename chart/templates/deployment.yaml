@@ -57,25 +57,8 @@ spec:
             readOnlyRootFilesystem: true
           env:
             {{- include "database.config" . | nindent 12 }}
-
-            # OpenTelemetry Collector Configuration
-            - name: Otlp__Enabled
-              value: {{ .Values.otlp.enabled | quote }}
-            {{- if .Values.otlp.enabled }}
-            - name: Otlp__Endpoint
-              value: {{ required "otel.endpoint is required when enabled" .Values.otlp.endpoint | quote }}
-            {{- end }}
-
-            # Chronicler Configuration
-            {{- if .Values.config.networkConfigurationFile }}
-            - name: network__ConfigurationUri
-              value: file:///etc/config/networkConfiguration.json
-            {{- else if .Values.config.networkConfigurationUri }}
-            - name: network__ConfigurationUri
-              value: {{ .Values.config.networkConfigurationUri }}
-            {{- else }}
-              {{ fail "No network configuration provided" }}
-            {{- end }}
+            {{- include "otlp.config" . | nindent 12 }}
+            {{- include "networkConfig.environmentVariables" .Values.networkConfig | nindent 12}}
 
             - name: chronicler__JobInterval
               value: {{ .Values.config.jobInterval }}
@@ -94,11 +77,7 @@ spec:
             - name: &signingKeyVolumeName signing-key-volume
               mountPath: *signingKeyFilename
               subPath: &signingKeyVolumePath signing-key
-            {{- if .Values.config.networkConfigurationFile }}
-            - name: &networkConfigVolumeName config-volume
-              mountPath: /etc/config/networkConfiguration.json
-              subPath:  &networkConfigSubPath networkConfiguration.json
-            {{- end }}
+            {{- include "networkConfig.volumeMounts" .Values.networkConfig | nindent 12}}
       volumes:
         - name: service-account-token
           projected:
@@ -116,11 +95,4 @@ spec:
             items:
               - key: {{ .Values.config.signingKeySecret.key }}
                 path: *signingKeyVolumePath
-        {{- if .Values.config.networkConfigurationFile }}
-        - name: *networkConfigVolumeName
-          configMap:
-            name: po-chronicler-deployment-config
-            items:
-              - key: *networkConfigSubPath
-                path: *networkConfigSubPath
-        {{- end }}
+        {{- include "networkConfig.volumes" $ | nindent 8}}
