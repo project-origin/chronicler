@@ -40,7 +40,7 @@ This requires an additional rule to be added to the Energy Tack & Trace rules.
 
 Below is a C4 system diagram of an overview of the system landscape OriginChronicler is a part of.
 
-![C4 System Diagram](./doc/diagrams/system-c4.drawio.svg)
+![C4 System Diagram](./diagrams/system-c4.drawio.svg)
 
 ## Suggested call flow
 
