@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Dapper;
 using FluentAssertions;
+using GraphQL.Types.Relay.DataObjects;
 using Npgsql;
 using ProjectOrigin.Chronicler.Server;
 using ProjectOrigin.Chronicler.Server.Models;
@@ -375,5 +376,47 @@ public sealed class ChroniclerRepositoryTests : IClassFixture<PostgresDatabaseFi
 
         // Assert
         _con.QuerySingle<ClaimRecord>("SELECT * FROM claim_records").Should().BeEquivalentTo(record);
+    }
+
+    [Fact]
+    public async Task WithdrawClaimRecord_WithdrawsClaimRecord()
+    {
+        var record1 = new ClaimRecord()
+        {
+            RegistryName = _fixture.Create<string>(),
+            State = ClaimRecordState.Claimed,
+            CertificateId = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
+            Quantity = 123,
+            RandomR = _fixture.Create<byte[]>()
+        };
+        var record2 = new ClaimRecord()
+        {
+            RegistryName = _fixture.Create<string>(),
+            State = ClaimRecordState.Claimed,
+            CertificateId = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
+            Quantity = 124,
+            RandomR = _fixture.Create<byte[]>()
+        };
+        await _repository.InsertClaimRecord(record1);
+        await _repository.InsertClaimRecord(record2);
+
+        await _repository.WithdrawClaimRecord(new FederatedCertificateId
+        {
+            RegistryName = record1.RegistryName,
+            StreamId = record1.CertificateId
+        });
+
+        var withdrawnRecord = await _con.QuerySingleAsync<ClaimRecord>(@"SELECT * FROM claim_records
+                                                            WHERE registry_name = @registryName 
+                                                            AND certificate_id = @certificateId",
+            new
+            {
+                registryName = record1.RegistryName,
+                certificateId = record1.CertificateId
+            });
+
+        withdrawnRecord.State.Should().Be(ClaimRecordState.Withdrawn);
     }
 }
