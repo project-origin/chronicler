@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Dapper;
 using FluentAssertions;
-using GraphQL.Types.Relay.DataObjects;
 using Npgsql;
 using ProjectOrigin.Chronicler.Server;
 using ProjectOrigin.Chronicler.Server.Models;
