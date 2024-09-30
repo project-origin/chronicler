@@ -24,5 +24,6 @@ public interface IChroniclerRepository
 
     Task InsertClaimRecord(ClaimRecord record);
     Task WithdrawClaimRecord(FederatedCertificateId fid);
+    Task UnclaimClaimRecord(FederatedCertificateId fid);
 
 }
