@@ -45,16 +45,19 @@ secret_filename=${temp_folder}/secret.yaml
 
 # create kind cluster
 kind delete cluster --name ${cluster_name}
-kind create cluster --name ${cluster_name}
+kind create cluster --name ${cluster_name} &
+
+# build docker image
+make build-container &
+
+# wait for cluster and container to be ready
+wait
 
 # create namespace
 kubectl create namespace ${namespace}
 
 # install postgresql chart
 helm install postgresql oci://registry-1.docker.io/bitnamicharts/postgresql --namespace ${namespace}
-
-# build docker image
-docker build -f src/Chronicler.Dockerfile -t ghcr.io/project-origin/chronicler:test src/
 
 # load docker image into cluster
 kind load --name ${cluster_name} docker-image ghcr.io/project-origin/chronicler:test
