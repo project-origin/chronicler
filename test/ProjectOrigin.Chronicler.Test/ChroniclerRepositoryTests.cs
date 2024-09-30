@@ -417,4 +417,46 @@ public sealed class ChroniclerRepositoryTests : IClassFixture<PostgresDatabaseFi
 
         withdrawnRecord.State.Should().Be(ClaimRecordState.Withdrawn);
     }
+
+    [Fact]
+    public async Task UnclaimClaimRecord_UnclaimsClaimRecord()
+    {
+        var record1 = new ClaimRecord()
+        {
+            RegistryName = _fixture.Create<string>(),
+            State = ClaimRecordState.Claimed,
+            CertificateId = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
+            Quantity = 123,
+            RandomR = _fixture.Create<byte[]>()
+        };
+        var record2 = new ClaimRecord()
+        {
+            RegistryName = _fixture.Create<string>(),
+            State = ClaimRecordState.Claimed,
+            CertificateId = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
+            Quantity = 124,
+            RandomR = _fixture.Create<byte[]>()
+        };
+        await _repository.InsertClaimRecord(record1);
+        await _repository.InsertClaimRecord(record2);
+
+        await _repository.UnclaimClaimRecord(new FederatedCertificateId
+        {
+            RegistryName = record1.RegistryName,
+            StreamId = record1.CertificateId
+        });
+
+        var unclaimedRecord = await _con.QuerySingleAsync<ClaimRecord>(@"SELECT * FROM claim_records
+                                                            WHERE registry_name = @registryName 
+                                                            AND certificate_id = @certificateId",
+            new
+            {
+                registryName = record1.RegistryName,
+                certificateId = record1.CertificateId
+            });
+
+        unclaimedRecord.State.Should().Be(ClaimRecordState.Unclaimed);
+    }
 }

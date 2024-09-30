@@ -15,5 +15,6 @@ public record ClaimRecord
 public enum ClaimRecordState
 {
     Claimed = 0,
-    Withdrawn = 3
+    Withdrawn = 3,
+    Unclaimed = 7
 }

@@ -93,6 +93,10 @@ public class BlockReaderJob : IBlockReaderJob
             {
                 await ProcessWithdrawnEvent(repository, transaction);
             }
+            else if (transaction.Header.PayloadType == Electricity.V1.UnclaimedEvent.Descriptor.FullName)
+            {
+                await ProcessUnclaimedEvent(repository, transaction);
+            }
         }
 
         await repository.UpsertReadBlock(new LastReadBlock
@@ -187,5 +191,12 @@ public class BlockReaderJob : IBlockReaderJob
         var fid = transaction.Header.FederatedStreamId.ToModel();
 
         await repository.WithdrawClaimRecord(fid);
+    }
+
+    private static async Task ProcessUnclaimedEvent(IChroniclerRepository repository, Registry.V1.Transaction transaction)
+    {
+        var fid = transaction.Header.FederatedStreamId.ToModel();
+
+        await repository.UnclaimClaimRecord(fid);
     }
 }

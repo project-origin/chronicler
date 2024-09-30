@@ -148,7 +148,7 @@ public class ChroniclerRepository : AbstractRepository, IChroniclerRepository
 
     public async Task WithdrawClaimRecord(FederatedCertificateId fid)
     {
-        var rowsChanged = await Connection.ExecuteAsync(
+        await Connection.ExecuteAsync(
             @"UPDATE claim_records
                   SET state = @state
                   WHERE registry_name = @registryName
@@ -159,8 +159,20 @@ public class ChroniclerRepository : AbstractRepository, IChroniclerRepository
                 certificateId = fid.StreamId,
                 state = ClaimRecordState.Withdrawn
             });
+    }
 
-        if (rowsChanged != 1)
-            throw new InvalidOperationException($"ClaimRecord with registry {fid.RegistryName} and certificateId {fid.StreamId} not found");
+    public async Task UnclaimClaimRecord(FederatedCertificateId fid)
+    {
+        await Connection.ExecuteAsync(
+            @"UPDATE claim_records
+                  SET state = @state
+                  WHERE registry_name = @registryName
+                    AND certificate_id = @certificateId",
+            new
+            {
+                registryName = fid.RegistryName,
+                certificateId = fid.StreamId,
+                state = ClaimRecordState.Unclaimed
+            });
     }
 }
