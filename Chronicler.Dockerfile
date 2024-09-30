@@ -11,7 +11,7 @@ COPY protos protos
 COPY src src
 
 RUN dotnet tool restore
-RUN dotnet publish src/${PROJECT}} -c Release -p:CustomAssemblyName=App -o /app/publish
+RUN dotnet publish src/${PROJECT} -c Release -p:CustomAssemblyName=App -o /app/publish
 
 # ------- production image -------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0.8-jammy-chiseled-extra AS production
