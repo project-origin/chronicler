@@ -58,7 +58,7 @@ spec:
           env:
             {{- include "database.config" . | nindent 12 }}
             {{- include "otlp.config" . | nindent 12 }}
-            {{- include "networkConfig.environmentVariables" .Values.networkConfig | nindent 12}}
+            {{- include "networkConfig.environmentVariables" .Values.networkConfig | nindent 12 }}
 
             - name: chronicler__JobInterval
               value: {{ .Values.config.jobInterval }}
@@ -77,7 +77,7 @@ spec:
             - name: &signingKeyVolumeName signing-key-volume
               mountPath: *signingKeyFilename
               subPath: &signingKeyVolumePath signing-key
-            {{- include "networkConfig.volumeMounts" .Values.networkConfig | nindent 12}}
+            {{- include "networkConfig.volumeMounts" .Values.networkConfig | nindent 12 }}
       volumes:
         - name: service-account-token
           projected:
@@ -95,4 +95,4 @@ spec:
             items:
               - key: {{ .Values.config.signingKeySecret.key }}
                 path: *signingKeyVolumePath
-        {{- include "networkConfig.volumes" $ | nindent 8}}
+        {{- include "networkConfig.volumes" $ | nindent 8 }}
