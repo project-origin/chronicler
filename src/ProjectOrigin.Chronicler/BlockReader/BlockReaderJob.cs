@@ -193,7 +193,7 @@ public class BlockReaderJob : IBlockReaderJob
         await repository.WithdrawClaimRecord(fid);
     }
 
-    private async Task ProcessUnclaimedEvent(IChroniclerRepository repository, Registry.V1.Transaction transaction)
+    private static async Task ProcessUnclaimedEvent(IChroniclerRepository repository, Registry.V1.Transaction transaction)
     {
         var fid = transaction.Header.FederatedStreamId.ToModel();
 
