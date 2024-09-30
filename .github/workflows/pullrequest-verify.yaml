@@ -7,22 +7,22 @@ on:
 
 jobs:
   verify-devcontainer:
-    uses: project-origin/.github/.github/workflows/reusable-verify-devcontainer.yaml@5f308f6499ed423ed1252156296e18be614202de
+    uses: project-origin/.github/.github/workflows/reusable-verify-devcontainer.yaml@e60d4e84fd4a7ccb2827046672e1bacae91712ae
 
   verify-code:
-    uses: project-origin/.github/.github/workflows/reusable-verify-code.yaml@5f308f6499ed423ed1252156296e18be614202de
+    uses: project-origin/.github/.github/workflows/reusable-verify-code.yaml@e60d4e84fd4a7ccb2827046672e1bacae91712ae
 
   verify-renovate-config:
-    uses: project-origin/.github/.github/workflows/reusable-verify-renovate.yaml@5f308f6499ed423ed1252156296e18be614202de
+    uses: project-origin/.github/.github/workflows/reusable-verify-renovate.yaml@e60d4e84fd4a7ccb2827046672e1bacae91712ae
 
   verify-chart:
     uses: project-origin/.github/.github/workflows/reusable-verify-chart.yaml@32ff33baaf1c9960ef1f01ef4ee554225db1972c
 
   verify-container-build:
-    uses: project-origin/.github/.github/workflows/reusable-build-push-container-ghcr.yaml@5f308f6499ed423ed1252156296e18be614202de
+    uses: project-origin/.github/.github/workflows/reusable-build-push-container-ghcr.yaml@e60d4e84fd4a7ccb2827046672e1bacae91712ae
     with:
       imagename: ghcr.io/project-origin/chronicler
       version: test
-      context: ./src
-      dockerfile: ./src/Chronicler.Dockerfile
+      context: .
+      dockerfile: Chronicler.Dockerfile
       push: false
