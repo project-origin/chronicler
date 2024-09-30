@@ -15,8 +15,8 @@ jobs:
     with:
       imagename: ghcr.io/project-origin/chronicler
       version: ${{ needs.define-version.outputs.version }}
-      context: ./src
-      dockerfile: ./src/Chronicler.Dockerfile
+      context: .
+      dockerfile: Chronicler.Dockerfile
       push: true
 
   publish-chart:
