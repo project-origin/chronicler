@@ -1,0 +1,1 @@
+ALTER TABLE claim_records ADD COLUMN state int NOT NULL DEFAULT 0;

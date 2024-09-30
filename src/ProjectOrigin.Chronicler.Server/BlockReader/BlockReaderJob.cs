@@ -89,6 +89,10 @@ public class BlockReaderJob : IBlockReaderJob
             {
                 await ProcessClaimedEvent(repository, transaction);
             }
+            else if (transaction.Header.PayloadType == Electricity.V1.WithdrawnEvent.Descriptor.FullName)
+            {
+                await ProcessWithdrawnEvent(repository, transaction);
+            }
         }
 
         await repository.UpsertReadBlock(new LastReadBlock
@@ -167,6 +171,7 @@ public class BlockReaderJob : IBlockReaderJob
                 CertificateId = fid.StreamId,
                 Quantity = claimIntent.Quantity,
                 RandomR = claimIntent.RandomR,
+                State = ClaimRecordState.Claimed
             });
             await repository.DeleteClaimIntent(claimIntent.Id);
             await repository.DeleteClaimAllocation(allocation.Id);
@@ -175,5 +180,12 @@ public class BlockReaderJob : IBlockReaderJob
         {
             _logger.LogTrace("Claim for certificate {registry}-{certificateId} not relevant", fid.RegistryName, fid.StreamId);
         }
+    }
+
+    private async Task ProcessWithdrawnEvent(IChroniclerRepository repository, Registry.V1.Transaction transaction)
+    {
+        var fid = transaction.Header.FederatedStreamId.ToModel();
+
+        await repository.WithdrawClaimRecord(fid);
     }
 }

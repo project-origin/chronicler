@@ -268,6 +268,27 @@ public class BlockReaderJobTests
         _repository.VerifyNoOtherCalls();
     }
 
+    [Fact]
+    public async Task ProcessWithdrawnEvent_WithdrawsClaim()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        var certificateId = new FederatedCertificateId { RegistryName = RegistryName, StreamId = fixture.Create<Guid>() };
+        var block = new Registry.V1.Block
+        {
+            Height = 1,
+        };
+        block.AddWithdrawn(certificateId);
+        _registryService.Setup(x => x.GetNextBlock(RegistryName, 0)).ReturnsAsync(block);
+
+        // Act
+        await _job.ProcessRegistryBlocks(RegistryName, 0, default);
+
+        // Assert
+        _repository.Verify(x => x.UpsertReadBlock(It.Is<LastReadBlock>(x => x.BlockHeight == 1)), Times.Once);
+        _repository.Verify(x => x.WithdrawClaimRecord(certificateId), Times.Once);
+        _repository.VerifyNoOtherCalls();
+    }
 
     [Fact]
     public async Task Verify_Claimed_Found_Inserted()
@@ -452,6 +473,19 @@ public static class BlockExtensions
                 AllocationId = new Common.V1.Uuid { Value = allocationId.ToString() },
                 CertificateId = id.ToProto(),
             }.ToByteString()
+        });
+    }
+
+    public static void AddWithdrawn(this Registry.V1.Block block, FederatedCertificateId id)
+    {
+        block.Transactions.Add(new Registry.V1.Transaction
+        {
+            Header = new Registry.V1.TransactionHeader
+            {
+                PayloadType = Electricity.V1.WithdrawnEvent.Descriptor.FullName,
+                FederatedStreamId = id.ToProto(),
+            },
+            Payload = new Electricity.V1.WithdrawnEvent().ToByteString()
         });
     }
 }
