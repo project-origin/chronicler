@@ -1,12 +1,9 @@
-docfx_config := doc/docfx.json
-docfx_site_dir := doc/_site
-
 formatting_header := \033[1m
 formatting_command := \033[1;34m
 formatting_desc := \033[0;32m
 formatting_none := \033[0m
 
-.PHONY: help test clean build lint
+.PHONY: test
 
 .DEFAULT_GOAL := help
 
@@ -37,7 +34,7 @@ clean:
 
 ## Restores all dotnet projects
 restore:
-	dotnet tool restore --tool-manifest src/.config/dotnet-tools.json
+	dotnet tool restore
 	dotnet restore
 
 ## Builds all the code
