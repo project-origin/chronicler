@@ -1,10 +1,15 @@
-# Default values for project-origin-chronicler.
+# global values
+global:
+  # imageRegistry is the global docker image registry that will override the image registry for all images in all charts
+  imageRegistry: ""
 
-# image defines the image configuration for the chronicler server
+# image holds the configuration for the image to use for the chronicler
 image:
-  # repository defines the image repository to use
-  repository: ghcr.io/project-origin/chronicler
-  # tag defines the image tag to use, defaults to the chart appVersion
+  # registry is the registry to pull the image from
+  registry: ghcr.io
+  # repository is the repository to pull the image from
+  repository: project-origin/chronicler
+  # tag is the tag to pull defaults to the chart version
   tag:
 
 # resources holds the configuration for the resource requests and limits
@@ -140,3 +145,13 @@ otlp:
   enabled: false
   # endpoint defines the endpoint of the opentelemetry collector, example "http://otel-collector:4317"
   endpoint:
+
+# migrationWaiter holds the configuration for the migration waiter
+migrationWaiter:
+  # image holds the configuration for the image to use for the migration waiter
+  image:
+    registry: docker.io
+    # repository is the repository to pull the image from
+    repository: bitnami/kubectl
+    # tag is the tag to pull defaults to the chart version
+    tag: 1.31.1

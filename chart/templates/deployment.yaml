@@ -2,63 +2,63 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: po-chronicler-deployment
+  name: {{ $.Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: po-chronicler
+    app: {{ $.Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: po-chronicler
+      app: {{ $.Release.Name }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: po-chronicler
+        app: {{ $.Release.Name }}
     spec:
-      serviceAccountName: chronicler-migration-waiter
+      serviceAccountName: {{ $.Release.Name }}-migration-waiter
       automountServiceAccountToken: false
       securityContext:
         runAsUser: 1654
         runAsNonRoot: true
       initContainers:
         - name: wait-for-migration
-          image: bitnami/kubectl:1.30.4
+          image: {{ include "common.image" (dict "root" $ "image" $.Values.migrationWaiter.image) }}
           resources:
             requests:
               cpu: 0.1
             limits:
               memory: 50Mi
               ephemeral-storage: "1Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           command:
             - /bin/sh
             - -c
             - |
-              kubectl wait --for=condition=complete job/${JOB_NAME} --timeout=300s -n {{ .Release.Namespace }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
+              kubectl wait --for=condition=complete job/${JOB_NAME} --timeout=300s -n {{ $.Release.Namespace }}
           env:
             - name: JOB_NAME
-              value: po-chronicler-migrate-job-{{ .Values.image.tag | default .Chart.AppVersion | replace "." "-" }}
+              value: {{ include "migrate.job-name" $ }}
           volumeMounts:
             - name: service-account-token
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
       containers:
-        - name: po-chronicler
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
-          {{ include "limits" . | nindent 10 }}
+        - name: chronicler
+          image: {{ include "common.image" (dict "root" $ "image" $.Values.image) }}
+          {{- include "common.limits" .resources | nindent 10 }}
           args:
             - "--serve"
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
           env:
-            {{- include "database.config" . | nindent 12 }}
-            {{- include "otlp.config" . | nindent 12 }}
-            {{- include "networkConfig.environmentVariables" .Values.networkConfig | nindent 12 }}
+            {{- include "common.database.config" $ | nindent 12 }}
+            {{- include "common.otlp.config" $.Values.otlp | nindent 12 }}
+            {{- include "common.networkConfig.environmentVariables" .Values.networkConfig | nindent 12}}
 
             - name: chronicler__JobInterval
               value: {{ .Values.config.jobInterval }}
@@ -77,7 +77,7 @@ spec:
             - name: &signingKeyVolumeName signing-key-volume
               mountPath: *signingKeyFilename
               subPath: &signingKeyVolumePath signing-key
-            {{- include "networkConfig.volumeMounts" .Values.networkConfig | nindent 12 }}
+            {{- include "common.networkConfig.volumeMounts" .Values.networkConfig | nindent 12}}
       volumes:
         - name: service-account-token
           projected:
@@ -95,4 +95,4 @@ spec:
             items:
               - key: {{ .Values.config.signingKeySecret.key }}
                 path: *signingKeyVolumePath
-        {{- include "networkConfig.volumes" $ | nindent 8 }}
+        {{- include "common.networkConfig.volumes" $ | nindent 8}}

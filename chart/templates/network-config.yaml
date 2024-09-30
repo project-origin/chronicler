@@ -1,1 +1,1 @@
-{{- include "networkConfig.configMap" $ }}
+{{- include "common.networkConfig.configMap" $}}
