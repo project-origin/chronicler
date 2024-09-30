@@ -1,10 +1,1 @@
-{{- if .Values.config.networkConfigurationFile }}
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: po-chronicler-deployment-config
-  namespace: {{ .Release.Namespace }}
-data:
-  networkConfiguration.json: |-
-    {{ .Values.config.networkConfigurationFile | nindent 4 }}
-{{- end }}
+{{- include "common.networkConfig.configMap" $ }}
