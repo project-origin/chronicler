@@ -14,8 +14,8 @@ set:
 tests:
   - it: should create a ConfigMap for network configuration
     set:
-      config:
-        networkConfigurationFile: |-
+      networkConfig:
+        json: |-
           {
             "RegistryUrls": {
               "narnia": "https://narnia.com",
@@ -29,8 +29,8 @@ tests:
 
   - it: should not create a ConfigMap for network configuration when networkConfigurationFile is not set
     set:
-      config:
-        networkConfigurationUri: "https://narnia.com"
+      networkConfig:
+        url: "https://narnia.com"
     asserts:
       - hasDocuments:
           count: 0

@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: po-chronicler-migrate-job-{{ .Values.image.tag | default .Chart.AppVersion | replace "." "-" }}
+  name: {{ include "migrate.job-name" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   backoffLimit: 0
@@ -16,13 +16,13 @@ spec:
         runAsNonRoot: true
       restartPolicy: Never
       containers:
-        - name: po-chronicler-migrate-job
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          {{ include "limits" . | nindent 10 }}
+        - name: {{ .Release.Name }}-migrate-job
+          image: {{ include "common.image" (dict "root" $ "image" $.Values.image) }}
+          {{- include "common.limits" .resources | nindent 10 }}
           args:
             - "--migrate"
           env:
-            {{- include "database.config" . | nindent 12 }}
+            {{- include "common.database.config" $ | nindent 12 }}
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

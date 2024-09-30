@@ -4,8 +4,8 @@ templates:
   - deployment.yaml
 
 set:
-  config:
-    networkConfigurationUri: "_"
+  networkConfig:
+    url: "_"
   postgresql:
     host: "_"
     port: "_"
@@ -52,20 +52,23 @@ tests:
       - matchRegex:
           path: spec.template.spec.containers[0].env[?(@.name=="DB_PASSWORD")].valueFrom.secretKeyRef.key
           pattern: "somePasswordKey"
+
   - it: should set network configuration correctly when networkConfigurationUri is set
     set:
-      config:
-        networkConfigurationUri: "http://example.com"
+      networkConfig:
+        url: "http://example.com"
     asserts:
       - isKind:
           of: Deployment
       - matchRegex:
           path: spec.template.spec.containers[0].env[?(@.name=="network__ConfigurationUri")].value
           pattern: "http://example.com"
+
   - it: should add a volume and volume mount for network configuration when networkConfigurationFile is set
     set:
-      config:
-        networkConfigurationFile: |-
+      networkConfig:
+        url:
+        json: |-
           {
             "RegistryUrls": {
               "narnia": "https://narnia.com",
@@ -83,6 +86,7 @@ tests:
       - matchRegex:
           path: spec.template.spec.volumes[?(@.name=="config-volume")].configMap.items[0].key
           pattern: "networkConfiguration.json"
+
   - it: should set areas correctly
     set:
       config:

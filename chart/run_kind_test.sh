@@ -76,10 +76,13 @@ config:
     key: my-key
   gridAreas:
     - narnia
-  networkConfigurationFile: |-
+networkConfig:
+  json: |-
     {
-      "RegistryUrls": {
-        "narniaRegistry": "https://registry.narnia.example.com"
+      "Registries": {
+        "narniaRegistry": {
+          "Url": "https://registry.narnia.example.com"
+        }
       }
     }
 postgresql:
