@@ -92,6 +92,7 @@ postgresql:
   host: postgresql
   database: postgres
   username: postgres
+  port: 5432
   password:
     secretRef:
       name: postgresql
