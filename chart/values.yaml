@@ -107,7 +107,7 @@ postgresql:
     #   name:
     #   key:
   # port defines the port of the postgresql database
-  port: "5432"
+  port:
     # secretRef:
     #   name:
     #   key:

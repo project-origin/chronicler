@@ -3,7 +3,6 @@ name: project-origin-chronicler
 description: A helm chart for deploying the Project Origin Chronicler
 type: application
 version: 0.1.0
-appVersion: "0.1.0"
 
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
