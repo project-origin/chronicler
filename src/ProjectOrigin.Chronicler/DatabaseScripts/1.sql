@@ -20,7 +20,7 @@ BEGIN
 
     IF NOT FOUND THEN
         INSERT INTO read_blocks (registry_name, block_height, read_at)
-        VALUES (NEW.registry_name, -1, NOW());
+        VALUES (NEW.registry_name, 0, NOW());
     END IF;
 
     RETURN NEW;

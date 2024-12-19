@@ -18,7 +18,7 @@ public class RegistryService : IRegistryService
 
         var response = await client.GetBlocksAsync(new Registry.V1.GetBlocksRequest
         {
-            Skip = previousBlockHeight + 1,
+            Skip = previousBlockHeight,
             Limit = 1,
             IncludeTransactions = true,
         });

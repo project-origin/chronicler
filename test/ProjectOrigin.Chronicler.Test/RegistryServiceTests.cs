@@ -62,7 +62,7 @@ public class RegistryServiceTests
         // Assert
         _factory.Verify(x => x.GetClient(RegistryName), Times.Once);
         mockClient.Verify(x => x.GetBlocksAsync(It.Is<Registry.V1.GetBlocksRequest>(
-            x => x.Skip == height + 1
+            x => x.Skip == height
             && x.Limit == 1
             && x.IncludeTransactions == true
             ), null, null, default), Times.Once);
