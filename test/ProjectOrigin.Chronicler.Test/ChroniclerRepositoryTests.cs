@@ -62,7 +62,7 @@ public sealed class ChroniclerRepositoryTests : IClassFixture<PostgresDatabaseFi
         _con.QuerySingle<ClaimIntent>("SELECT * FROM claim_intents").Should().BeEquivalentTo(intent);
         var block = _con.QuerySingle<LastReadBlock>("SELECT * FROM read_blocks");
         block.RegistryName.Should().Be(intent.RegistryName);
-        block.BlockHeight.Should().Be(-1);
+        block.BlockHeight.Should().Be(0);
     }
 
     [Fact]
@@ -449,7 +449,7 @@ public sealed class ChroniclerRepositoryTests : IClassFixture<PostgresDatabaseFi
         });
 
         var unclaimedRecord = await _con.QuerySingleAsync<ClaimRecord>(@"SELECT * FROM claim_records
-                                                            WHERE registry_name = @registryName 
+                                                            WHERE registry_name = @registryName
                                                             AND certificate_id = @certificateId",
             new
             {
