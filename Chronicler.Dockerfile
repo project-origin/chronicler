@@ -1,6 +1,6 @@
 ARG PROJECT=ProjectOrigin.Chronicler
 
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0.101 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0.102 AS build
 ARG PROJECT
 
 WORKDIR /builddir
