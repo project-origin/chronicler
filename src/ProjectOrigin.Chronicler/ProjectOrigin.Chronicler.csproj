@@ -24,13 +24,13 @@
   <ItemGroup>
     <Protobuf Include="../../protos/chronicler.proto" GrpcServices="Both" />
     <Protobuf Include="../../protos/registry.proto" Link="protos\registry.proto">
-      <SourceUrl>https://raw.githubusercontent.com/project-origin/registry/v2.1.0/protos/registry.proto</SourceUrl>
+      <SourceUrl>https://raw.githubusercontent.com/project-origin/registry/v3.0.5/protos/registry.proto</SourceUrl>
     </Protobuf>
     <Protobuf Include="../../protos/electricity.proto" Link="protos\electricity.proto">
       <SourceUrl>https://raw.githubusercontent.com/project-origin/verifier_electricity/v1.4.0/protos/electricity.proto</SourceUrl>
     </Protobuf>
     <Protobuf Include="../../protos/common.proto" Link="protos\common.proto">
-      <SourceUrl>https://raw.githubusercontent.com/project-origin/registry/v2.1.0/protos/common.proto</SourceUrl>
+      <SourceUrl>https://raw.githubusercontent.com/project-origin/registry/v3.0.5/protos/common.proto</SourceUrl>
     </Protobuf>
   </ItemGroup>
 
