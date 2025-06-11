@@ -21,7 +21,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.17" />
     <!--
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="8.0.4" /> -->
     <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
